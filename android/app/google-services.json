@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "644303970101",
+    "project_id": "agrilease-ecd0b",
+    "storage_bucket": "agrilease-ecd0b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644303970101:android:e84a00264fc732540af67c",
+        "android_client_info": {
+          "package_name": "com.example.agrilease"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBa6jmt826rK1vlfnHYZkn9_xuPZpv6NfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

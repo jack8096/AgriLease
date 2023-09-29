@@ -1,8 +1,16 @@
+import 'package:agrilease/pages/recent_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:agrilease/recent_section_api.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+
+
+
+void main()async {
   runApp(const MyApp());
 }
 
@@ -35,19 +43,25 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
 late bool isloading;
+
+Future<void> firebaseIntiation()async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  print(Firebase.apps);
+  Future.delayed(const Duration(seconds: 1),(){
+  if(Firebase.apps.isNotEmpty){   setState(() {    isloading = false;     });   } //Firebase.apps.isNotEmpty is a list of services initated if empty connect to firebase is failed
+});
+} 
+
+
 @override
 void initState() {
   isloading = true;
-  Future.delayed(const Duration(seconds: 3), (){
-  setState(() {
-    isloading = false;
-  });
 
 
-  } );
-
-    super.initState();
-  }
+firebaseIntiation();
+    
+    super.initState(); }
 
 
 
@@ -72,13 +86,12 @@ void _navigationBarIndex(int index){
         ),)
       ),
       body:
-      //ListView.builder(shrinkWrap: true, itemCount: 2, itemBuilder: ((BuildContext context, int index) => const Text('data i'))),
-      Column( 
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [Container(padding: const EdgeInsets.all(20),  child: const Text('Recent'),), //padding: EdgeInsets.all(20),
+      
+      Column( crossAxisAlignment: CrossAxisAlignment.start,
+      children: [Container(padding: const EdgeInsets.all(20),  child: const Text('Recent'),),
         isloading?
         const Expanded(child: LoadingshimmeringEffect())
-        :const Text('recent equipment are showed here'),
+        :const RecentSection(),
 
 
 
@@ -111,14 +124,14 @@ class LoadingshimmeringEffect extends StatelessWidget {
      Animate(onComplete: (controller) => controller.repeat(),  effects:const  [ShimmerEffect(color: Colors.white38, duration: Duration(seconds: 2)), ],
     child: 
     ListView.separated(shrinkWrap: true, itemCount: 4, itemBuilder: ((BuildContext context, int index) => //const Text('data i')),
-    Row( mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [ ProductCards(), ProductCards(),],) ),
+    Row( mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [ DemoProductCards(), DemoProductCards(),],) ),
     separatorBuilder: (context, index)=>  const SizedBox(height: 10), 
     ));
   }
 }
 
-class ProductCards extends StatelessWidget {
-   ProductCards({super.key,});
+class DemoProductCards extends StatelessWidget {
+   DemoProductCards({super.key,});
 
 final foregroundColor = Colors.grey[400];
 final backgroundColor = Colors.grey[200];
@@ -137,14 +150,3 @@ final backgroundColor = Colors.grey[200];
   }
 }
 
-class RecentSection extends StatelessWidget {
-  const RecentSection({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Welcome to the App',),);
-  }
-}
