@@ -5,7 +5,13 @@ class RecentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProductCard();
+    return Expanded(
+      child: Padding( padding: const EdgeInsets.all(5),
+        child: GridView.count(crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5, childAspectRatio: 0.7,
+        children: [ProductCard(),ProductCard(),ProductCard(),ProductCard()],
+        ),
+      ),
+    );
   }
 }
 
@@ -13,10 +19,21 @@ class RecentSection extends StatelessWidget {
 
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
+ProductCard({super.key});
+
+final foregroundColor = Colors.grey[400];
+final backgroundColor = Colors.grey[200];
+
 
   @override
   Widget build(BuildContext context) {
-    return Text('hi');
-  }
+    return  Container( height: 200,  color: backgroundColor, //width: 150,
+       child: Column( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+         children: [ 
+         Container( height: 100, width: 130, color: Colors.white, ),  
+         Container( height: 20, width: 130, color: foregroundColor, child: const Text('Price'),),  
+         Container( height: 20, width: 130, color: foregroundColor, child: const Text('Title'),),  
+         Container( height: 20, width: 130, color: foregroundColor, child: const Text('Description'),),  
+       ],),
+     );}
 }

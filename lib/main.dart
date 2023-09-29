@@ -122,10 +122,11 @@ class LoadingshimmeringEffect extends StatelessWidget {
   Widget build(BuildContext context) {
     return 
      Animate(onComplete: (controller) => controller.repeat(),  effects:const  [ShimmerEffect(color: Colors.white38, duration: Duration(seconds: 2)), ],
-    child: 
-    ListView.separated(shrinkWrap: true, itemCount: 4, itemBuilder: ((BuildContext context, int index) => //const Text('data i')),
-    Row( mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [ DemoProductCards(), DemoProductCards(),],) ),
-    separatorBuilder: (context, index)=>  const SizedBox(height: 10), 
+    child: Expanded( child: Padding( padding: const EdgeInsets.all(5),
+      child: GridView.count(crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5, childAspectRatio: 0.7,
+        children: [DemoProductCards(),DemoProductCards(),DemoProductCards(),DemoProductCards(),],
+        ),
+    ),
     ));
   }
 }
