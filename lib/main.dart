@@ -1,9 +1,8 @@
 import 'package:agrilease/pages/recent_section.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:agrilease/recent_section_api.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -41,17 +40,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
 late bool isloading;
-
 Future<void> firebaseIntiation()async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  await FetchData.fetchData();
+  //FetchData.fetchImage();
   print(Firebase.apps);
   Future.delayed(const Duration(seconds: 1),(){
-  if(Firebase.apps.isNotEmpty){   setState(() {    isloading = false;     });   } //Firebase.apps.isNotEmpty is a list of services initated if empty connect to firebase is failed
+  if(Firebase.apps.isNotEmpty  ){   setState(() {    isloading = false;     });   } //Firebase.apps.isNotEmpty is a list of services initated if empty connect to firebase is failed
 });
 } 
+
+// Future<void> firebaseStorageInitiation()async{
+
+
+
+// }
 
 
 @override
@@ -59,8 +64,7 @@ void initState() {
   isloading = true;
 
 
-firebaseIntiation();
-    
+firebaseIntiation(); 
     super.initState(); }
 
 
@@ -106,9 +110,9 @@ void _navigationBarIndex(int index){
     currentIndex: _currentIndex,
       items:  const [
       BottomNavigationBarItem(icon: Icon(Ionicons.home_outline), label: 'Home'),
-      BottomNavigationBarItem(icon: Icon(Ionicons.chatbox), label: 'Chat'),
-      BottomNavigationBarItem(icon: Icon(Ionicons.heart_circle_outline), label: 'ads'),
-      BottomNavigationBarItem(icon: Icon(Ionicons.person_circle_outline), label: 'profile'),
+      BottomNavigationBarItem(icon: Icon(Ionicons.chatbox_outline), label: 'Chat'),
+      BottomNavigationBarItem(icon: Icon(Ionicons.heart_outline), label: 'My Ads'),
+      BottomNavigationBarItem(icon: Icon(Ionicons.person_outline), label: 'Profile'),
       ]);
   }
 }
