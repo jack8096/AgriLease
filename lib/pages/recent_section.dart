@@ -88,12 +88,12 @@ final textColor = Colors.grey[700];
     String description = FetchData.list[index].description; //'description';//'very good tractor';
     return  GestureDetector( onTap: () {  },
       child: Container( height: 200,   decoration: BoxDecoration(color: Colors.white,  border: Border.all(color: Colors.grey)),//width: 150, 
-         child: Column( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+         child: Column( mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
            children: [ 
-              Expanded(flex:7, child: Padding(padding: const EdgeInsets.fromLTRB(5,0,5,0), child: AspectRatio(aspectRatio: 0.9, child: Container( color: Colors.grey[200], child: Image.network(image), ),)),),
+              Expanded(flex:7, child: Padding(padding: const EdgeInsets.fromLTRB(5,5,5,0), child: AspectRatio(aspectRatio: 0.9, child: Container( color: Colors.grey[200], child: Image.network(image, fit: BoxFit.fitHeight,), ),)),),
               Expanded(flex:3, child: Padding( padding: const EdgeInsets.fromLTRB(5,0,5,5),
                 child: Column( crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [Text(price, selectionColor: textColor,), Text(title), Text(description,  maxLines: 1, overflow: TextOverflow.ellipsis,)]),
+                  children: [Text('\u20B9$price',style: const TextStyle(fontSize: 16), selectionColor: textColor,), Text(title), Text(description,  maxLines: 1, overflow: TextOverflow.ellipsis,)]),
               )
               //Container(color: Colors.black,)
               ),
