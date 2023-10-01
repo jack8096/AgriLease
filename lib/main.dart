@@ -1,5 +1,4 @@
 import 'package:agrilease/pages/recent_section.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:ionicons/ionicons.dart';
@@ -45,18 +44,12 @@ Future<void> firebaseIntiation()async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   await FetchData.fetchData();
-  //FetchData.fetchImage();
   print(Firebase.apps);
   Future.delayed(const Duration(seconds: 1),(){
-  if(Firebase.apps.isNotEmpty  ){   setState(() {    isloading = false;     });   } //Firebase.apps.isNotEmpty is a list of services initated if empty connect to firebase is failed
+  if(Firebase.apps.isNotEmpty & FetchData.list.isNotEmpty ){   setState(() {    isloading = false;     });   } //Firebase.apps.isNotEmpty is a list of services initated if empty connect to firebase is failed
 });
 } 
 
-// Future<void> firebaseStorageInitiation()async{
-
-
-
-// }
 
 
 @override
@@ -85,14 +78,13 @@ void _navigationBarIndex(int index){
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Container( padding: const EdgeInsets.all(5), decoration: const BoxDecoration(color: Colors.white, borderRadius:BorderRadius.all(Radius.circular(18))),
           child: const Row(children: [ Text('search' ), Spacer(),  Icon(Ionicons.search_outline), ]
-          //child: const Row(children: [Expanded(flex:1, child: Spacer()), Expanded(flex:9, child: Text('search' ), ), Expanded(flex:1, child: Icon(Ionicons.search_outline), ) ]
          
         ),)
       ),
       body:
       
       Column( crossAxisAlignment: CrossAxisAlignment.start,
-      children: [Container(padding: const EdgeInsets.all(20),  child: const Text('Recent'),),
+      children: [Container(padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: const Text('Recent', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),),
         isloading?
         const Expanded(child: LoadingshimmeringEffect())
         :const RecentSection(),

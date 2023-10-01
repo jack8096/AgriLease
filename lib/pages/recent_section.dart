@@ -1,5 +1,5 @@
+import 'package:agrilease/pages/product_card_full_detail_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
 import 'package:agrilease/recent_section_api.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +11,7 @@ class ProductDetail { final String image; final String title; final String price
 
 class FetchData{
 static late List<ProductDetail> list;
+static late int dataListLength;
 static List imageURLlist = [];
 static Map imageURLMap = {};
 
@@ -21,8 +22,8 @@ final FirebaseDatabase snapShotData = await DatabaseInitiation().recentSectionDa
 dynamic data = await snapShotData.ref().get();
 dynamic dataList = data.value;
 
-int dataSize = dataList.length;
-for(var index = 0; index < dataSize; index++ ){ //print(index);
+dataListLength = dataList.length;
+for(var index = 0; index < dataListLength; index++ ){ 
   productDetailList.add( ProductDetail(description: dataList[index]['description']??'None', title: dataList[index]['title']??'None.', image: dataList[index]['image']??'None.jpeg', //fetchImage(dataList[index]['image']), 
   price: dataList[index]['price']??'None') );
   fetchImage(dataList[index]['image']??'None.jpeg');
@@ -31,6 +32,12 @@ for(var index = 0; index < dataSize; index++ ){ //print(index);
 print(productDetailList); 
 //print(dataList.runtimeType); 
 list = productDetailList;
+}
+
+
+
+static void fetchProductDetail()async{
+  
 }
 
 
@@ -57,15 +64,13 @@ class RecentSection extends StatelessWidget  {
 
   @override
   Widget build(BuildContext context) {
-    //child: GridView.builder(gridDelegate: gridDelegate, itemBuilder: itemBuilder)
     return Expanded(
       child:Padding( padding: const EdgeInsets.all(5),
-        child: GridView.count(crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5, childAspectRatio: 0.7,
-        children: [ProductCard(index: 0),ProductCard(index: 1), //Container(color:Colors.black, height: 200, width: 200, child: Image.network(FetchData.imagesURL),),
-        ],
-        ),
-      ),
-    );
+        child: 
+        GridView.count(crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5, childAspectRatio: 0.7,
+        children: List<Widget>.generate(FetchData.dataListLength, (index) {return Builder(builder: (BuildContext context){return ProductCard(index: index);});})
+        )
+    ));
   }
 }
 
@@ -86,7 +91,8 @@ final textColor = Colors.grey[700];
     String price = FetchData.list[index].price;//'price';
     String title = FetchData.list[index].title;//'tractor';
     String description = FetchData.list[index].description; //'description';//'very good tractor';
-    return  GestureDetector( onTap: () {  },
+    return  GestureDetector( onTap: () { Navigator.push( context,
+              MaterialPageRoute(builder: (context) =>  FullProductDetail(image: image, price:price, title:title, description:description  )),); },
       child: Container( height: 200,   decoration: BoxDecoration(color: Colors.white,  border: Border.all(color: Colors.grey)),//width: 150, 
          child: Column( mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
            children: [ 
@@ -98,14 +104,6 @@ final textColor = Colors.grey[700];
               //Container(color: Colors.black,)
               ),
 
-
-
-
-          //  Expanded(flex: 1, child: Spacer()),
-          //  Expanded(flex: 3, child: AspectRatio(aspectRatio: 0.9, child: Container( color: Colors.grey[200], ),  ),),
-          //  Expanded(flex: 1, child: Text(price ,      style: TextStyle( color: textColor, ),),),
-          //  Expanded(flex: 1, child: Text(title ,      style: TextStyle( color: textColor, ),),),
-          //  Expanded(flex: 1, child: Text(description, style: TextStyle( color: textColor, ),),),
          ],),
        ),
     );}
