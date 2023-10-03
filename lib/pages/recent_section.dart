@@ -4,8 +4,8 @@ import 'package:agrilease/recent_section_api.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class ProductDetail { final String image; final String title; final String price; final String description;
-  ProductDetail({required this.image, required this.title, required this.price, required this.description, });
+class ProductDetail { final String image; final String title; final String price; final String description; final String contact; final String location;
+  ProductDetail({required this.image, required this.title, required this.price, required this.description, required this.location, required this.contact,});
 }
 
 
@@ -24,7 +24,7 @@ dynamic dataList = data.value;
 
 dataListLength = dataList.length;
 for(var index = 0; index < dataListLength; index++ ){ 
-  productDetailList.add( ProductDetail(description: dataList[index]['description']??'None', title: dataList[index]['title']??'None.', image: dataList[index]['image']??'None.jpeg', //fetchImage(dataList[index]['image']), 
+  productDetailList.add( ProductDetail(description: dataList[index]['description']??'None', title: dataList[index]['title']??'None', image: dataList[index]['image']??'None.jpeg', location: dataList[index]['location']??'None.', contact: dataList[index]['contact']??'None.',
   price: dataList[index]['price']??'None') );
   fetchImage(dataList[index]['image']??'None.jpeg');
  }
@@ -80,7 +80,7 @@ class RecentSection extends StatelessWidget  {
 class ProductCard extends StatelessWidget {final int index;
 ProductCard({super.key,  required this.index});
 
-final textColor = Colors.grey[700];
+final textColor = Colors.grey[850];
 
 
 
@@ -91,15 +91,20 @@ final textColor = Colors.grey[700];
     String price = FetchData.list[index].price;//'price';
     String title = FetchData.list[index].title;//'tractor';
     String description = FetchData.list[index].description; //'description';//'very good tractor';
+    String location = FetchData.list[index].location;
+    String contact = FetchData.list[index].contact;
     return  GestureDetector( onTap: () { Navigator.push( context,
-              MaterialPageRoute(builder: (context) =>  FullProductDetail(image: image, price:price, title:title, description:description  )),); },
-      child: Container( height: 200,   decoration: BoxDecoration(color: Colors.white,  border: Border.all(color: Colors.grey)),//width: 150, 
+              MaterialPageRoute(builder: (context) =>  FullProductDetail(image: image, price:price, title:title, description:description, location: location, contact: contact,)),); },
+      child: Container( height: 200,   decoration: BoxDecoration(color: Colors.white,  border: Border.all(color: Colors.black12)),//width: 150, 
          child: Column( mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
            children: [ 
-              Expanded(flex:7, child: Padding(padding: const EdgeInsets.fromLTRB(5,5,5,0), child: AspectRatio(aspectRatio: 0.9, child: Container( color: Colors.grey[200], child: Image.network(image, fit: BoxFit.fitHeight,), ),)),),
+              Expanded(flex:7, child: Padding(padding: const EdgeInsets.fromLTRB(5,5,5,0), child: AspectRatio(aspectRatio: 0.9, child: 
+              Container( decoration: BoxDecoration(color: Colors.grey[200], border: Border.all(color: Colors.black26), image: DecorationImage( image: 
+              NetworkImage(image), fit: BoxFit.fitHeight, filterQuality: FilterQuality.low, opacity: 0.9)  ),)),),), //child: Image.network(image, fit: BoxFit.fitHeight,),
+
               Expanded(flex:3, child: Padding( padding: const EdgeInsets.fromLTRB(5,0,5,5),
-                child: Column( crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [Text('\u20B9$price',style: const TextStyle(fontSize: 16), selectionColor: textColor,), Text(title), Text(description,  maxLines: 1, overflow: TextOverflow.ellipsis,)]),
+              child: Column( crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [Text('\u20B9$price',style: const TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold), selectionColor: textColor,), Text(title, style: const TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.normal),), Text(description,  maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.black87, fontSize: 12, fontWeight: FontWeight.normal,))]),
               )
               //Container(color: Colors.black,)
               ),

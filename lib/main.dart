@@ -1,3 +1,6 @@
+import 'package:agrilease/pages/chats.dart';
+import 'package:agrilease/pages/my_adds.dart';
+import 'package:agrilease/pages/profile.dart';
 import 'package:agrilease/pages/recent_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -15,7 +18,6 @@ void main()async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp( 
@@ -62,7 +64,7 @@ firebaseIntiation();
 
 
 
-int _currentIndex = 0;
+int _currentIndex = 2;
 void _navigationBarIndex(int index){
 
   setState(() {
@@ -70,28 +72,22 @@ void _navigationBarIndex(int index){
   });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
-
+final List<Widget> pages = [RecentPage(isloading: isloading), Chats(), MyAds(), Profile() ];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Container( padding: const EdgeInsets.all(5), decoration: const BoxDecoration(color: Colors.white, borderRadius:BorderRadius.all(Radius.circular(18))),
-          child: const Row(children: [ Text('search' ), Spacer(),  Icon(Ionicons.search_outline), ]
+          child: Row(children: [ Padding(padding: const EdgeInsets.only(left: 15), child: Text('search', style: TextStyle(color: Colors.grey[800]),)), const Spacer(),  const Icon(color:Colors.black54, Ionicons.search_outline), ]
          
         ),)
       ),
-      body:
+      body:pages[_currentIndex],
       
-      Column( crossAxisAlignment: CrossAxisAlignment.start,
-      children: [Container(padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: const Text('Recent', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),),
-        isloading?
-        const Expanded(child: LoadingshimmeringEffect())
-        :const RecentSection(),
-
-
-
-      ],), 
+      
       bottomNavigationBar: navigationBar(),
     );
   }
@@ -106,6 +102,28 @@ void _navigationBarIndex(int index){
       BottomNavigationBarItem(icon: Icon(Ionicons.heart_outline), label: 'My Ads'),
       BottomNavigationBarItem(icon: Icon(Ionicons.person_outline), label: 'Profile'),
       ]);
+  }
+}
+
+class RecentPage extends StatelessWidget {
+  const RecentPage({
+    super.key,
+    required this.isloading,
+  });
+
+  final bool isloading;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column( crossAxisAlignment: CrossAxisAlignment.start,
+    children: [Container(padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Text('Recent', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),),),
+      isloading?
+      const Expanded(child: LoadingshimmeringEffect())
+      :const RecentSection(),
+
+
+
+    ],);
   }
 }
 
