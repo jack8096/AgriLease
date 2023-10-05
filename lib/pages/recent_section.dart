@@ -64,12 +64,14 @@ class RecentSection extends StatelessWidget  {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child:Padding( padding: const EdgeInsets.all(5),
-        child: 
-        GridView.count(crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5, childAspectRatio: 0.7,
-        children: List<Widget>.generate(FetchData.dataListLength, (index) {return Builder(builder: (BuildContext context){return ProductCard(index: index);});})
-        )
+    return Expanded(child:Container(
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: GridView.count(crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5, childAspectRatio: 0.7,
+          children: List<Widget>.generate(FetchData.dataListLength, (index) {return Builder(builder: (BuildContext context){return ProductCard(index: index);});})
+          ),
+      ),
     ));
   }
 }
@@ -102,11 +104,9 @@ final textColor = Colors.grey[850];
               Container( decoration: BoxDecoration(color: Colors.grey[200], border: Border.all(color: Colors.black26), image: DecorationImage( image: 
               NetworkImage(image), fit: BoxFit.fitHeight, filterQuality: FilterQuality.low, opacity: 0.9)  ),)),),), //child: Image.network(image, fit: BoxFit.fitHeight,),
 
-              Expanded(flex:3, child: Padding( padding: const EdgeInsets.fromLTRB(5,0,5,5),
-              child: Column( crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              Padding( padding: const EdgeInsets.fromLTRB(5,0,5,5),
+              child: Column( crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [Text('\u20B9$price',style: const TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold), selectionColor: textColor,), Text(title, style: const TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.normal),), Text(description,  maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.black87, fontSize: 12, fontWeight: FontWeight.normal,))]),
-              )
-              //Container(color: Colors.black,)
               ),
 
          ],),

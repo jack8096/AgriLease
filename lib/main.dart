@@ -93,7 +93,8 @@ final List<Widget> pages = [RecentPage(isloading: isloading), Chats(), MyAds(), 
   }
 
   BottomNavigationBar navigationBar() {
-    return BottomNavigationBar( type: BottomNavigationBarType.fixed , showUnselectedLabels:false,
+    return BottomNavigationBar( backgroundColor: Colors.white,
+      type: BottomNavigationBarType.fixed , showUnselectedLabels:false,
     onTap: (value) => {_navigationBarIndex(value), },
     currentIndex: _currentIndex,
       items:  const [
@@ -115,8 +116,9 @@ class RecentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column( crossAxisAlignment: CrossAxisAlignment.start,
-    children: [Container(padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Text('Recent', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),),),
+    return 
+    Column( crossAxisAlignment: CrossAxisAlignment.stretch, 
+    children: [Container(color: Colors.white,  padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Text('Recent', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),),),
       isloading?
       const Expanded(child: LoadingshimmeringEffect())
       :const RecentSection(),
