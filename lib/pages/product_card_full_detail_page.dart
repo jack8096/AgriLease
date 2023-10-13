@@ -73,7 +73,7 @@ class DescriptionCard extends StatelessWidget {
       padding: const EdgeInsets.all(15), 
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Text('Description', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.normal )), 
-        Expanded(child: Text(description, style: const TextStyle(fontSize: 12, color: Colors.black54), ),)])));
+        Text(description, style: const TextStyle(fontSize: 12, color: Colors.black54, overflow: TextOverflow.ellipsis), )])));
   }
 }
 
@@ -98,7 +98,7 @@ class TitleCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceEvenly,  children: [
       AutoSizeText(title, style: TextStyle(color: Colors.grey[850], fontSize: 22, fontWeight: FontWeight.normal ),), 
       Text('\u20B9 $price', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500 ),),
-      Center(child: Expanded(child: Text(location, maxLines: 2,  style: const TextStyle(color: Colors.black38), ),)) //maxFontSize: 12, minFontSize:10,
+      Text(location,  style: const TextStyle(color: Colors.black38, overflow: TextOverflow.ellipsis), ) //maxFontSize: 12, minFontSize:10,
       ],)));
   }
 }

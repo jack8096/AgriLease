@@ -2,11 +2,21 @@ import 'package:agrilease/pages/product_card_full_detail_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:agrilease/recent_section_api.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class ProductDetail { final String image; final String title; final String price; final String description; final String contact; final String location;
   ProductDetail({required this.image, required this.title, required this.price, required this.description, required this.location, required this.contact,});
+
+factory ProductDetail.fromSnapshot(DataSnapshot snapshot){
+  Map<String,String> data = snapshot.value as Map<String, String>;
+  return ProductDetail(image: data['image']??"None.jpeg", title: data["title"]??"None", price: data["price"]??"None", description: data["description"]??"None", location: data["location"]??"None", contact: data["contact"]??"None");
 }
+}
+
+
+
+
 
 
 class FetchData{
@@ -23,22 +33,26 @@ dynamic data = await snapShotData.ref().get();
 dynamic dataList = data.value;
 
 dataListLength = dataList.length;
-for(var index = 0; index < dataListLength; index++ ){ 
-  productDetailList.add( ProductDetail(description: dataList[index]['description']??'None', title: dataList[index]['title']??'None', image: dataList[index]['image']??'None.jpeg', location: dataList[index]['location']??'None.', contact: dataList[index]['contact']??'None.',
-  price: dataList[index]['price']??'None') );
-  fetchImage(dataList[index]['image']??'None.jpeg');
+dynamic mapId;
+print('dataList: $dataList,');
+
+for( mapId in dataList.keys ){
+
+  productDetailList.add( ProductDetail(description: dataList[mapId]?['description']??'None', title: dataList[mapId]['title']??'None', image: dataList[mapId]['image']??'None.jpeg', location: dataList[mapId]['location']??'None.', contact: dataList[mapId]['contact']??'None.',
+  price: dataList[mapId]['price']??'None') );
+  fetchImage(dataList[mapId]['image']??'None.jpeg');
  }
- //print('list size is $dataSize');
+ 
 print(productDetailList); 
-//print(dataList.runtimeType); 
+
 list = productDetailList;
 }
 
 
 
-static void fetchProductDetail()async{
+// static void fetchProductDetail()async{
   
-}
+// }
 
 
 static void  fetchImage(imageName)async{

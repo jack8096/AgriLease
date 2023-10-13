@@ -38,7 +38,7 @@ DatabaseReference value =  database.ref().push();
 //try{
 await value.set(productDetailData);
 print("productDetailID : ${value.key}");
-FireStore.write(value.key??"none");
+FireStore.write(value.key??'none');
 //}catch(e){print(e);}
 
 }

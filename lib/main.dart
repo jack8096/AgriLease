@@ -2,6 +2,7 @@ import 'package:agrilease/pages/chats.dart';
 import 'package:agrilease/pages/my_adds.dart';
 import 'package:agrilease/pages/profile.dart';
 import 'package:agrilease/pages/recent_section.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:ionicons/ionicons.dart';
@@ -46,46 +47,39 @@ Future<void> firebaseIntiation()async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   await FetchData.fetchData();
+  await FirebaseAuth;
   print(Firebase.apps);
   Future.delayed(const Duration(seconds: 1),(){
-  if(Firebase.apps.isNotEmpty & FetchData.list.isNotEmpty ){   setState(() {    isloading = false;     });   } //Firebase.apps.isNotEmpty is a list of services initated if empty connect to firebase is failed
+  if(Firebase.apps.isNotEmpty & FetchData.list.isNotEmpty ){ isloadingSetState(false);  } //Firebase.apps.isNotEmpty is a list of services initated if empty connect to firebase is failed
 });
 } 
 
+void isloadingSetState( bool condition ){ setState(() {    isloading = condition;     });  }
 
 
 @override
-void initState() {
-  isloading = true;
-
-
-firebaseIntiation(); 
-    super.initState(); }
+void initState() { isloading = true;  firebaseIntiation();   super.initState(); }
 
 
 
-int _currentIndex = 2;
-void _navigationBarIndex(int index){
-
-  setState(() {
-    _currentIndex = index;
-  });
-  }
+int _currentIndex = 3;
+void _navigationBarIndex(int index){  setState(() { _currentIndex = index; });}
 
 
 
   @override
   Widget build(BuildContext context) {
-final List<Widget> pages = [RecentPage(isloading: isloading), Chats(), MyAds(), Profile() ];
+final List<Widget> pages = [RecentPage( isloadingSetState:isloadingSetState, isloading: isloading,  ), Chats(), MyAdsPage(), Profile() ];
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Container( padding: const EdgeInsets.all(5), decoration: const BoxDecoration(color: Colors.white, borderRadius:BorderRadius.all(Radius.circular(18))),
-          child: Row(children: [ Padding(padding: const EdgeInsets.only(left: 15), child: Text('search', style: TextStyle(color: Colors.grey[800]),)), const Spacer(),  const Icon(color:Colors.black54, Ionicons.search_outline), ]
+      // appBar: AppBar(
+      //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      //   title: Container( padding: const EdgeInsets.all(5), decoration: const BoxDecoration(color: Colors.white, borderRadius:BorderRadius.all(Radius.circular(18))),
+      //     child: Row(children: [ Padding(padding: const EdgeInsets.only(left: 15), child: Text('search', style: TextStyle(color: Colors.grey[800]),)), const Spacer(),  const Icon(color:Colors.black54, Ionicons.search_outline), ]
          
-        ),)
-      ),
-      body:pages[_currentIndex],
+      //   ),)
+      // ),
+      body: IndexedStack( children: pages, index: _currentIndex,),
+      //pages[_currentIndex],
       
       
       bottomNavigationBar: navigationBar(),
@@ -105,27 +99,26 @@ final List<Widget> pages = [RecentPage(isloading: isloading), Chats(), MyAds(), 
       ]);
   }
 }
-
-class RecentPage extends StatelessWidget {
-  const RecentPage({
-    super.key,
-    required this.isloading,
+// ignore: must_be_immutable
+class RecentPage extends StatefulWidget   { Function isloadingSetState; bool isloading;
+  RecentPage({
+    super.key, required this.isloadingSetState, required this.isloading,
   });
 
-  final bool isloading;
-
   @override
-  Widget build(BuildContext context) {
-    return 
-    Column( crossAxisAlignment: CrossAxisAlignment.stretch, 
+  State<RecentPage> createState() => _RecentPageState();
+}
+
+class _RecentPageState extends State<RecentPage> {
+  @override
+  Widget build(BuildContext context) { return RefreshIndicator(onRefresh: ()async{print('refresh indicator'); setState(() { widget.isloading = true;}); await FetchData.fetchData(); setState(() { widget.isloading = false;}); },
+    child:Column( crossAxisAlignment: CrossAxisAlignment.stretch, 
     children: [Container(color: Colors.white,  padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Text('Recent', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),),),
-      isloading?
+      widget.isloading?
       const Expanded(child: LoadingshimmeringEffect())
       :const RecentSection(),
+    ],),);
 
-
-
-    ],);
   }
 }
 
@@ -138,11 +131,10 @@ class LoadingshimmeringEffect extends StatelessWidget {
   Widget build(BuildContext context) {
     return 
      Animate(onComplete: (controller) => controller.repeat(),  effects:const  [ShimmerEffect(color: Colors.white38, duration: Duration(seconds: 2)), ],
-    child: Expanded( child: Padding( padding: const EdgeInsets.all(5),
+    child: Container( padding: const EdgeInsets.all(5),
       child: GridView.count(crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5, childAspectRatio: 0.7,
         children: [DemoProductCards(),DemoProductCards(),DemoProductCards(),DemoProductCards(),],
         ),
-    ),
     ));
   }
 }
