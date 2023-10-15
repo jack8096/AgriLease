@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:agrilease/login_api.dart';
 import 'package:agrilease/pages/my_adds.dart';
 import 'package:agrilease/pages/recent_section.dart';
 import 'package:agrilease/recent_section_api.dart';
@@ -32,6 +33,7 @@ final productDetailData = {
   'location':productDetail.location,
   'contact':productDetail.contact,
   'image':productDetail.image,
+  'email':productDetail.email,
   };
 
 DatabaseReference value =  database.ref().push();
@@ -110,7 +112,7 @@ void submitForm(){
 var validate = _formKey.currentState!.validate();
 print('form is $validate');
 if( _formKey.currentState!.validate() & UploadData.isImageSelected ){
-   final productDetail =   ProductDetail(title: title.text, price: price.text, description: description.text, image: UploadData.selectedImage.name, location: location.text, contact: contact.text );
+   final productDetail =   ProductDetail(email:FireBaseAuthentication.emailID, title: title.text, price: price.text, description: description.text, image: UploadData.selectedImage.name, location: location.text, contact: contact.text );
    UploadData.uploadImage();
    UploadData.write(productDetail);
 }}

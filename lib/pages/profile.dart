@@ -1,7 +1,7 @@
 import 'package:agrilease/login_api.dart';
-import 'package:agrilease/pages/my_adds.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:agrilease/pages/profile_settings_page.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -10,58 +10,111 @@ class Profile extends StatefulWidget {
   State<Profile> createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
-String name = "____";
-String email = "-----@---.com";
-String address = "-----\n---\n---";
-String contact = "-----------";
-String? profilePhotoUrl;
+class ProfileInfo{
 
-void setProfileInfo(){
-  profilePhotoUrl = FireBaseAuthentication.photoURL;
-  name= FireBaseAuthentication.accountInfo?.displayName??"None";
-  email = FireBaseAuthentication.emailID;
+bool isProfileSet = false;
+
+static String name = "____";
+static String email = "-----@---.com";
+static String address = "-----\n---\n---";
+static String contact = "-----------";
+static String? profilePhotoUrl;
+
+// static late String name;
+// static late String email;
+// static late String address;
+// static late String contact;
+// static late String? profilePhotoUrl;
+
+ static  setProfileInfo()async{
+  
+  profilePhotoUrl = await FireBaseAuthentication.photoURL;
+  name = await FireBaseAuthentication.accountInfo?.displayName??"None";
+  email = await FireBaseAuthentication.emailID;
   address = "You haven't saved your address yet";
   contact = "You haven't saved your contact yet";
+  print("setProfileInfo run $name $email $profilePhotoUrl ");
 
-  setState(() {name; email; address;
+}}
 
-});
-  }
+class _ProfileState extends State<Profile> {
+
+String name = ProfileInfo.name;
+String email = ProfileInfo.email;
+String address = ProfileInfo.address;
+String contact = ProfileInfo.contact;
+String? profilePhotoUrl = ProfileInfo.profilePhotoUrl; 
 
 
-googleSignInDialog()async{  if(FireBaseAuthentication.isSignedIn){return ;} print("googleSignInDialog run"); 
-                            await showDialog(context: context, builder: (context){return AlertGoogleSignInDialog();});
-                             setProfileInfo(); }
+void setProfileInfo(){
+setState(() {
+
+name = ProfileInfo.name;
+email = ProfileInfo.email;
+address = ProfileInfo.address;
+contact = ProfileInfo.contact;
+profilePhotoUrl = ProfileInfo.profilePhotoUrl;  
+
+});}
+
+
+
+
+
+// void setProfileInfo(){
+  
+//   profilePhotoUrl = FireBaseAuthentication.photoURL;
+//   name = FireBaseAuthentication.accountInfo?.displayName??"None";
+//   email = FireBaseAuthentication.emailID;
+//   address = "You haven't saved your address yet";
+//   contact = "You haven't saved your contact yet";
+
+//   setState(() {name; email; address;
+
+// });}
+
+void changeState(){setState(() { name; address; email; profilePhotoUrl; }); print("name $name");  } 
+
+void googleSignInDialog()async{ if(FireBaseAuthentication.isSignedIn){return ;}
+                             print("googleSignInDialog run"); 
+                            await showDialog(context: context, builder: (context){return const AlertGoogleSignInDialog();});
+                            
+                            setProfileInfo();
+                            
+                              }
 @override
   void initState() {
     super.initState();
+    
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => googleSignInDialog());
+         .addPostFrameCallback((_) => googleSignInDialog());
   }    
   
 
   @override
   Widget build(BuildContext context) {
-    return Container(decoration: const BoxDecoration(color :Colors.white, image: DecorationImage(fit: BoxFit.cover, image: AssetImage("assets/ProfileBackgroudImage.jpg"))),  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),  child: ListView(
-        children: [
-          Container(margin: const EdgeInsets.fromLTRB(0, 64, 0, 0), child: ProfileCard(name: name, profilePhotoUrl: profilePhotoUrl,)),
-          AddressCard(address: address),
-          CommanCard(text: email, label: "Email", icon: Ionicons.mail_outline,),
-          CommanCard(text: contact, label: "Contact", icon: Icons.phone),
-          TempWidget()
-        ],
-      ),);
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar( surfaceTintColor: Colors.white70, elevation: 0, backgroundColor: const Color.fromARGB(0, 255, 255, 255),  actions: [Padding(padding: const EdgeInsets.fromLTRB(20, 0, 20, 0), child: InkWell(onTap: (){ Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ProfileSettings())); }, child: const Icon(Ionicons.settings_outline),),)],), // Color.fromARGB(255, 40, 42, 88),
+      body: Container(decoration: const BoxDecoration(color :Colors.white, image: DecorationImage(fit: BoxFit.cover, image: AssetImage("assets/ProfileBackgroudImage.jpg"))),  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),  child: ListView(
+          children: [
+            Container(margin: const EdgeInsets.fromLTRB(0, 64, 0, 0), child: ProfileCard(name: name, profilePhotoUrl: profilePhotoUrl,)),
+            AddressCard(address: address),
+            CommanCard(text: email, label: "Email", icon: Ionicons.mail_outline,),
+            CommanCard(text: contact, label: "Contact", icon: Icons.phone),
+          ],
+        ),),
+    );
   }
 }
 
 class AlertGoogleSignInDialog extends StatelessWidget {
-  AlertGoogleSignInDialog({ 
+  const AlertGoogleSignInDialog({ 
     super.key,
   });
   
 void someFunction(context)async{ await FireBaseAuthentication.signInWithGooggle();  print('object');
-                            if(FireBaseAuthentication.isSignedIn){ return Navigator.of(context).pop();}
+                            if(FireBaseAuthentication.isSignedIn){await ProfileInfo.setProfileInfo(); return Navigator.of(context).pop();}
                              }
   @override
   Widget build(BuildContext context) {
@@ -152,22 +205,3 @@ String defaultProfilePhotoUrl = "https://external-content.duckduckgo.com/iu/?u=h
 
 
 
-class TempWidget extends StatelessWidget {
-  const TempWidget({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column( mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center,
-      children: [  
-        const Text('Page Under Construction'),
-        OutlinedButton(onPressed: (){print('loged in Status: ${FireBaseAuthentication.isSignedIn}');}, child: const Text('Google SignIn status')),
-        OutlinedButton(onPressed: (){FireBaseAuthentication.userSignOut();}, child: const Text('Google SignOut')),
-        OutlinedButton(onPressed: ()async{ FireBaseAuthentication.main(); await FireBaseAuthentication.signInWithGooggle(); }, child: const Text('sign in')),
-        OutlinedButton(onPressed: ()async{ await MyAds.fetchProductDetal();           //await FireStore.fetchProductDetalID();
-        }, child: const Text('FireStore')),
-      ],
-    );
-  }
-}

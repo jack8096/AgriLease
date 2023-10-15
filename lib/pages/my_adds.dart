@@ -62,11 +62,10 @@ static  fetchProductDetal()async{ //Future<List<ProductDetail>>
     DataSnapshot data = await snapShotData.ref(id).get();
     mapObjectList.add(data.value);}
     
-    //print(mapObjectList);
 
     List productDetailList = [];
-     for( dynamic data in mapObjectList ){ 
-      productDetailList.add( ProductDetail(image: data['image']??"None.jpeg", title: data['title'], price: data['price'], description: data['description'], location: data['location'], contact: data["contact"]) );
+     for( dynamic data in mapObjectList ){ print("hi deepak 24"); print(data);
+      productDetailList.add( ProductDetail(image: data['image']??"None.jpeg", title: data['title'], price: data['price'], description: data['description'], email: data["email"], location: data['location'], contact: data["contact"]) );
       }
     print(productDetailList);
     print("code block run");
@@ -90,6 +89,7 @@ class MyAdsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.green[50], title: const Text("My Ads", style: TextStyle(color: Colors.black45),),),
       body: //!FireBaseAuthentication.isSignedIn? Center(child: Column(children: [const Text("You have not signed in yet,sign in to see your previous Ad's"), GestureDetector(onTap: (){}, child: GoogleButton())]),):
       
       const ShowAds(),
@@ -129,7 +129,7 @@ class ShowAds extends StatefulWidget {
 class _ShowAdsState extends State<ShowAds> {
 late dynamic productDetailList;
 bool isLoading = true;
-void someFunction()async{   productDetailList = await MyAds.fetchProductDetal();  if(mounted){setState(() { isLoading=false; }); }} //isLoading=false;
+Future<void> someFunction()async{   productDetailList = await MyAds.fetchProductDetal(); print("someFunction"); setState(() { isLoading=false; });} //isLoading=false;
 
 
 someFunction1(name){  final  url = FetchData.imageURLMap[name]??"None.jpeg";  print("URL: $url"); return url; }
@@ -149,10 +149,11 @@ someFunction3(value, index )async{ print("$value $index"); try{
   @override
   
   Widget build(BuildContext context) {
-
   return 
-  !isLoading && FireBaseAuthentication.isSignedIn ?AdsListView():
-   const NotpublishedAd()  ;
+  RefreshIndicator( onRefresh: ()async{return someFunction();},
+  child: !isLoading && FireBaseAuthentication.isSignedIn ?AdsListView():
+   const NotpublishedAd()  ,
+  );
   
    
 
@@ -194,14 +195,14 @@ class NotpublishedAd extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.5,
-      child: Container( margin: const EdgeInsets.all(5),padding: const EdgeInsets.all(10),  decoration:  BoxDecoration( 
-        border: Border.all(color: Theme.of(context).primaryColor, width: 2), borderRadius: const BorderRadius.all(Radius.circular(6)) ),  child: Center(
-        child: Column(children: [
-          Expanded(child: Container( decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('assets/publications.webp'), fit: BoxFit.fitHeight)), )),
-          const Text("You haven't listed anything yet", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), ),
-          ],),),
+    return Center(child: AspectRatio( aspectRatio: 1.5,
+        child: Container( margin: const EdgeInsets.all(20),padding: const EdgeInsets.all(20),  decoration:  BoxDecoration( 
+          border: Border.all(color: Theme.of(context).primaryColor, width: 2), borderRadius: const BorderRadius.all(Radius.circular(6)) ),  child: Center(
+          child: Column(children: [
+            Expanded(child: Container( decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('assets/publications.webp'), fit: BoxFit.fitHeight)), )),
+            const Text("You haven't listed anything yet", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), ),
+            ],),),
+        ),
       ),
     );
   }

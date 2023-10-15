@@ -2,15 +2,14 @@ import 'package:agrilease/pages/product_card_full_detail_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:agrilease/recent_section_api.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class ProductDetail { final String image; final String title; final String price; final String description; final String contact; final String location;
-  ProductDetail({required this.image, required this.title, required this.price, required this.description, required this.location, required this.contact,});
+class ProductDetail { final String image; final String title; final String price; final String description; final String email;  final String contact; final String location;
+  ProductDetail({required this.image, required this.title, required this.price, required this.description, required this.email, required this.location, required this.contact,});
 
 factory ProductDetail.fromSnapshot(DataSnapshot snapshot){
   Map<String,String> data = snapshot.value as Map<String, String>;
-  return ProductDetail(image: data['image']??"None.jpeg", title: data["title"]??"None", price: data["price"]??"None", description: data["description"]??"None", location: data["location"]??"None", contact: data["contact"]??"None");
+  return ProductDetail(image: data['image']??"None.jpeg", title: data["title"]??"None", price: data["price"]??"None", description: data["description"]??"None",  email: data["email"]??"None", location: data["location"]??"None", contact: data["contact"]??"None");
 }
 }
 
@@ -38,7 +37,7 @@ print('dataList: $dataList,');
 
 for( mapId in dataList.keys ){
 
-  productDetailList.add( ProductDetail(description: dataList[mapId]?['description']??'None', title: dataList[mapId]['title']??'None', image: dataList[mapId]['image']??'None.jpeg', location: dataList[mapId]['location']??'None.', contact: dataList[mapId]['contact']??'None.',
+  productDetailList.add( ProductDetail(description: dataList[mapId]?['description']??'None', email: dataList[mapId]?["email"]??"None", title: dataList[mapId]['title']??'None', image: dataList[mapId]['image']??'None.jpeg', location: dataList[mapId]['location']??'None.', contact: dataList[mapId]['contact']??'None.',
   price: dataList[mapId]['price']??'None') );
   fetchImage(dataList[mapId]['image']??'None.jpeg');
  }
@@ -50,9 +49,7 @@ list = productDetailList;
 
 
 
-// static void fetchProductDetail()async{
-  
-// }
+
 
 
 static void  fetchImage(imageName)async{
@@ -109,8 +106,9 @@ final textColor = Colors.grey[850];
     String description = FetchData.list[index].description; //'description';//'very good tractor';
     String location = FetchData.list[index].location;
     String contact = FetchData.list[index].contact;
+    String email = FetchData.list[index].email;
     return  GestureDetector( onTap: () { Navigator.push( context,
-              MaterialPageRoute(builder: (context) =>  FullProductDetail(image: image, price:price, title:title, description:description, location: location, contact: contact,)),); },
+              MaterialPageRoute(builder: (context) =>  FullProductDetail(image: image, price:price, title:title, description:description, email:email, location: location, contact: contact,)),); },
       child: Container( height: 200,   decoration: BoxDecoration(color: Colors.white,  border: Border.all(color: Colors.black12)),//width: 150, 
          child: Column( mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
            children: [ 

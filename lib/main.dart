@@ -69,17 +69,17 @@ void _navigationBarIndex(int index){  setState(() { _currentIndex = index; });}
 
   @override
   Widget build(BuildContext context) {
-final List<Widget> pages = [RecentPage( isloadingSetState:isloadingSetState, isloading: isloading,  ), Chats(), MyAdsPage(), Profile() ];
+final List<Widget> pages = [RecentPage( isloadingSetState:isloadingSetState, isloading: isloading,  ), const ChatsPage(), const MyAdsPage(), const Profile() ]; 
     return Scaffold(
       // appBar: AppBar(
-      //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      //   backgroundColor: //Theme.of(context).colorScheme.inversePrimary,
       //   title: Container( padding: const EdgeInsets.all(5), decoration: const BoxDecoration(color: Colors.white, borderRadius:BorderRadius.all(Radius.circular(18))),
       //     child: Row(children: [ Padding(padding: const EdgeInsets.only(left: 15), child: Text('search', style: TextStyle(color: Colors.grey[800]),)), const Spacer(),  const Icon(color:Colors.black54, Ionicons.search_outline), ]
          
       //   ),)
       // ),
-      body: IndexedStack( children: pages, index: _currentIndex,),
-      //pages[_currentIndex],
+      body: 
+      pages[_currentIndex],
       
       
       bottomNavigationBar: navigationBar(),
@@ -111,13 +111,15 @@ class RecentPage extends StatefulWidget   { Function isloadingSetState; bool isl
 
 class _RecentPageState extends State<RecentPage> {
   @override
-  Widget build(BuildContext context) { return RefreshIndicator(onRefresh: ()async{print('refresh indicator'); setState(() { widget.isloading = true;}); await FetchData.fetchData(); setState(() { widget.isloading = false;}); },
-    child:Column( crossAxisAlignment: CrossAxisAlignment.stretch, 
-    children: [Container(color: Colors.white,  padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Text('Recent', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),),),
-      widget.isloading?
-      const Expanded(child: LoadingshimmeringEffect())
-      :const RecentSection(),
-    ],),);
+  Widget build(BuildContext context) { return Scaffold(appBar: AppBar(backgroundColor: Colors.green[50], title: const Text("Home", style: TextStyle(color: Colors.black54),),),
+    body: RefreshIndicator(onRefresh: ()async{print('refresh indicator'); setState(() { widget.isloading = true;}); await FetchData.fetchData(); setState(() { widget.isloading = false;}); },
+      child:Column( crossAxisAlignment: CrossAxisAlignment.stretch, 
+      children: [Container(color: Colors.white,  padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Text('Recent', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),),),
+        widget.isloading?
+        const Expanded(child: LoadingshimmeringEffect())
+        :const RecentSection(),
+      ],),),
+  );
 
   }
 }
