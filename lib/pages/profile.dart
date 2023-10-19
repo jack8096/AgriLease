@@ -31,9 +31,8 @@ static String? profilePhotoUrl;
   profilePhotoUrl = await FireBaseAuthentication.photoURL;
   name = await FireBaseAuthentication.accountInfo?.displayName??"None";
   email = await FireBaseAuthentication.emailID;
-  address = "You haven't saved your address yet";
-  contact = "You haven't saved your contact yet";
-  print("setProfileInfo run $name $email $profilePhotoUrl ");
+  await SaveSetting().fetchProfieData().then((value){address= value!["address"]??address; contact = value["contact"]??contact;} );
+  return "setProfileInfo run $name $email $profilePhotoUrl ";
 
 }}
 
@@ -78,16 +77,22 @@ void changeState(){setState(() { name; address; email; profilePhotoUrl; }); prin
 void googleSignInDialog()async{ if(FireBaseAuthentication.isSignedIn){return ;}
                              print("googleSignInDialog run"); 
                             await showDialog(context: context, builder: (context){return const AlertGoogleSignInDialog();});
-                            
                             setProfileInfo();
-                            
                               }
 @override
   void initState() {
     super.initState();
     
-    WidgetsBinding.instance
-         .addPostFrameCallback((_) => googleSignInDialog());
+// if (!FireBaseAuthentication.isSignedIn) {
+//       WidgetsBinding.instance.addPostFrameCallback((_)async{await Navigator.of(context).push(MaterialPageRoute(builder: (context){return const LoginPage(); }));
+//     await ProfileInfo.setProfileInfo();
+//     setProfileInfo();
+//     } );
+// }
+    
+
+    ProfileInfo.setProfileInfo();
+    setProfileInfo();
   }    
   
 
@@ -95,7 +100,7 @@ void googleSignInDialog()async{ if(FireBaseAuthentication.isSignedIn){return ;}
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar( surfaceTintColor: Colors.white70, elevation: 0, backgroundColor: const Color.fromARGB(0, 255, 255, 255),  actions: [Padding(padding: const EdgeInsets.fromLTRB(20, 0, 20, 0), child: InkWell(onTap: (){ Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ProfileSettings())); }, child: const Icon(Ionicons.settings_outline),),)],), // Color.fromARGB(255, 40, 42, 88),
+      appBar: AppBar( surfaceTintColor: Colors.white70, elevation: 0, backgroundColor: const Color.fromARGB(0, 255, 255, 255),  actions: [Padding(padding: const EdgeInsets.fromLTRB(20, 0, 20, 0), child: InkWell(onTap: (){ Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ProfileSettings())).then((value)async{ await ProfileInfo.setProfileInfo(); setProfileInfo(); }   ) ; }, child: const Icon(Ionicons.settings_outline),),)],), // Color.fromARGB(255, 40, 42, 88),
       body: Container(decoration: const BoxDecoration(color :Colors.white, image: DecorationImage(fit: BoxFit.cover, image: AssetImage("assets/ProfileBackgroudImage.jpg"))),  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),  child: ListView(
           children: [
             Container(margin: const EdgeInsets.fromLTRB(0, 64, 0, 0), child: ProfileCard(name: name, profilePhotoUrl: profilePhotoUrl,)),
@@ -129,11 +134,11 @@ void someFunction(context)async{ await FireBaseAuthentication.signInWithGooggle(
 
 
 class CommanCard extends StatelessWidget {
-  String label;
-  String text;
-  IconData icon;
+  final String label;
+  final String text;
+  final IconData icon;
 
-  CommanCard({
+  const CommanCard({
     super.key,
     required this.text,
     required this.label,

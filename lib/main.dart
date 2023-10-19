@@ -1,3 +1,4 @@
+//import 'package:agrilease/login_api.dart';
 import 'package:agrilease/pages/chats.dart';
 import 'package:agrilease/pages/my_adds.dart';
 import 'package:agrilease/pages/profile.dart';
@@ -8,7 +9,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:ionicons/ionicons.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:agrilease/pages/login_page.dart';
 
 
 
@@ -58,11 +59,18 @@ void isloadingSetState( bool condition ){ setState(() {    isloading = condition
 
 
 @override
-void initState() { isloading = true;  firebaseIntiation();   super.initState(); }
+void initState() {
+WidgetsBinding.instance.addPostFrameCallback((_){
+Navigator.of(context).push(MaterialPageRoute(builder: (context){return const LoginPage();}));
+});  
+isloading = true;
+firebaseIntiation();
+super.initState();
+}
 
 
 
-int _currentIndex = 3;
+int _currentIndex = 0;
 void _navigationBarIndex(int index){  setState(() { _currentIndex = index; });}
 
 
@@ -78,8 +86,7 @@ final List<Widget> pages = [RecentPage( isloadingSetState:isloadingSetState, isl
          
       //   ),)
       // ),
-      body: 
-      pages[_currentIndex],
+      body: pages[_currentIndex],
       
       
       bottomNavigationBar: navigationBar(),
@@ -87,7 +94,7 @@ final List<Widget> pages = [RecentPage( isloadingSetState:isloadingSetState, isl
   }
 
   BottomNavigationBar navigationBar() {
-    return BottomNavigationBar( backgroundColor: Colors.white,
+    return BottomNavigationBar( backgroundColor: Colors.white, selectedItemColor: Colors.black,
       type: BottomNavigationBarType.fixed , showUnselectedLabels:false,
     onTap: (value) => {_navigationBarIndex(value), },
     currentIndex: _currentIndex,
@@ -111,8 +118,8 @@ class RecentPage extends StatefulWidget   { Function isloadingSetState; bool isl
 
 class _RecentPageState extends State<RecentPage> {
   @override
-  Widget build(BuildContext context) { return Scaffold(appBar: AppBar(backgroundColor: Colors.green[50], title: const Text("Home", style: TextStyle(color: Colors.black54),),),
-    body: RefreshIndicator(onRefresh: ()async{print('refresh indicator'); setState(() { widget.isloading = true;}); await FetchData.fetchData(); setState(() { widget.isloading = false;}); },
+  Widget build(BuildContext context) { return Scaffold(appBar: AppBar(surfaceTintColor: Colors.white, backgroundColor: Colors.green[50], title: const Text("Home", style: TextStyle(fontWeight: FontWeight.bold, color: Colors. black87),),),
+    body: RefreshIndicator(color: Colors.black, onRefresh: ()async{print('refresh indicator'); setState(() { widget.isloading = true;}); await FetchData.fetchData(); setState(() { widget.isloading = false;}); },
       child:Column( crossAxisAlignment: CrossAxisAlignment.stretch, 
       children: [Container(color: Colors.white,  padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Text('Recent', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),),),
         widget.isloading?
