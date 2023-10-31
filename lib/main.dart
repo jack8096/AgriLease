@@ -1,4 +1,6 @@
 //import 'package:agrilease/login_api.dart';
+
+import 'package:agrilease/l10n/l10.dart';
 import 'package:agrilease/pages/chats.dart';
 import 'package:agrilease/pages/my_adds.dart';
 import 'package:agrilease/pages/profile.dart';
@@ -10,6 +12,9 @@ import 'package:ionicons/ionicons.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:agrilease/pages/login_page.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'pages/search_page.dart';
 
 
 
@@ -17,18 +22,45 @@ void main()async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+static void setLocal(BuildContext context, Locale newLocale){
+_MyAppState? state = context.findAncestorStateOfType();
+state?.setLocale(newLocale);
+
+}
+
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale? _locale;
+
+  setLocale(Locale locale){
+setState(() {
+  _locale = locale;
+});
+  }
+  @override
   Widget build(BuildContext context) {
+
     return MaterialApp( 
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+        useMaterial3: true,),
+        
+        supportedLocales: L10.all,
+        locale: _locale,
+        localizationsDelegates: const[
+           AppLocalizations.delegate,
+           GlobalMaterialLocalizations.delegate,
+           GlobalWidgetsLocalizations.delegate,
+           GlobalCupertinoLocalizations.delegate
+         ],
       home: const MyHomePage(),
     );
   }
@@ -61,6 +93,8 @@ void isloadingSetState( bool condition ){ setState(() {    isloading = condition
 @override
 void initState() {
 WidgetsBinding.instance.addPostFrameCallback((_){
+
+
 Navigator.of(context).push(MaterialPageRoute(builder: (context){return const LoginPage();}));
 });  
 isloading = true;
@@ -98,11 +132,11 @@ final List<Widget> pages = [RecentPage( isloadingSetState:isloadingSetState, isl
       type: BottomNavigationBarType.fixed , showUnselectedLabels:false,
     onTap: (value) => {_navigationBarIndex(value), },
     currentIndex: _currentIndex,
-      items:  const [
-      BottomNavigationBarItem(icon: Icon(Ionicons.home_outline), label: 'Home'),
-      BottomNavigationBarItem(icon: Icon(Ionicons.chatbox_outline), label: 'Chat'),
-      BottomNavigationBarItem(icon: Icon(Ionicons.heart_outline), label: 'My Ads'),
-      BottomNavigationBarItem(icon: Icon(Ionicons.person_outline), label: 'Profile'),
+      items:  [
+      BottomNavigationBarItem(icon: const Icon(Ionicons.home_outline), label: AppLocalizations.of(context)!.tagHome),
+      BottomNavigationBarItem(icon: Icon(Ionicons.chatbox_outline), label: AppLocalizations.of(context)!.tagChat),
+      BottomNavigationBarItem(icon: Icon(Ionicons.heart_outline), label: AppLocalizations.of(context)!.tagMyAds),
+      BottomNavigationBarItem(icon: Icon(Ionicons.person_outline), label: AppLocalizations.of(context)!.tagProfile),
       ]);
   }
 }
@@ -118,7 +152,9 @@ class RecentPage extends StatefulWidget   { Function isloadingSetState; bool isl
 
 class _RecentPageState extends State<RecentPage> {
   @override
-  Widget build(BuildContext context) { return Scaffold(appBar: AppBar(surfaceTintColor: Colors.white, backgroundColor: Colors.green[50], title: const Text("Home", style: TextStyle(fontWeight: FontWeight.bold, color: Colors. black87),),),
+  Widget build(BuildContext context) { 
+    return Scaffold(
+    appBar: AppBar(actions: [IconButton(onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return const SearchPage();}));}, icon: const Padding(padding: EdgeInsets.only(right: 10), child: Icon(Ionicons.search_outline))  )], surfaceTintColor: Colors.white, backgroundColor: Colors.green[300], title: Text(AppLocalizations.of(context)!.tagHome, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors. black87),),),
     body: RefreshIndicator(color: Colors.black, onRefresh: ()async{print('refresh indicator'); setState(() { widget.isloading = true;}); await FetchData.fetchData(); setState(() { widget.isloading = false;}); },
       child:Column( crossAxisAlignment: CrossAxisAlignment.stretch, 
       children: [Container(color: Colors.white,  padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Text('Recent', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),),),

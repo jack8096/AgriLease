@@ -4,7 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.dart';
+import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
+import 'package:scrollable_clean_calendar/utils/enums.dart';
 
 class ChatsPage extends StatefulWidget {
   const ChatsPage({super.key});
@@ -34,14 +37,14 @@ try {
   Widget build(BuildContext context) {
     return 
     Scaffold(
-      appBar: AppBar(surfaceTintColor: Colors.white, title: const Text("Chat", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),), backgroundColor : Colors.blue[50],),
+      appBar: AppBar(surfaceTintColor: Colors.white, title: Text(AppLocalizations.of(context)!.tagChat, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),), backgroundColor : Colors.blue[50],),
       body: FutureBuilder(future: someFunction(), builder: (context, snapShot){late dynamic Data; try{ Data =  snapShot.data ; print("Data runtimeType: ${Data.runtimeType} Data = '$Data'");}catch(e){print(e);}
         if(snapShot.hasData){ //snapShot.hasData
           return ChatList(data: Data);
           
           
           }
-        else{return const Center(child: Text("Chat list is empty, try chating...", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 24),),);}
+        else{return Center(child: Text(AppLocalizations.of(context)!.tagChatLoadingMSG, style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 24),),);}
          }),
     );
   }
@@ -88,6 +91,9 @@ class ChatUserBox extends StatelessWidget {
 
 class ChatSection extends StatefulWidget {final String roomID; final String reciverEmail;
   const ChatSection({super.key, required this.roomID, required this.reciverEmail });
+//CleanCalendarController get getCalendarController{return calendarController;}
+
+static final CleanCalendarController calendarController = CleanCalendarController(initialDateSelected: DateTime.now(), endDateSelected: DateTime.now(), minDate: DateTime.now(), maxDate: DateTime.now().add(const Duration(days: 31)));
 
   @override
   State<ChatSection> createState() => _ChatSectionState( );
@@ -99,10 +105,36 @@ final TextEditingController _messageController = TextEditingController();
   Widget _someWidget(){return StreamBuilder(stream: Chats().getMessage(widget.roomID, widget.reciverEmail )  , builder:(context , final snapshot){
     if(snapshot.connectionState == ConnectionState.waiting){return const Center(child: Text("Start a chat to connect and discuss further", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),);}
     
-    if(snapshot.hasData){return ListView(children: snapshot.data!.docs.map((e) =>   messageBox(e.data()) ).toList(), ); }
+    if(snapshot.hasData){return ListView(children: 
+    
+      snapshot.data!.docs.map((e){
+      final data = e.data() as  Map<String, dynamic>; 
+      print("e: ${snapshot.data!.docs}");
+      if(data["message"]!=null){  return messageBox(e.data());  }else{  return scheduleBox(e.data()); }  }    ).toList(), ); }
+
+
     else{return const Center(child: Text("Error", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),);}
     
   }  ,);}
+
+Widget scheduleBox(doc){
+  doc as Map<String, dynamic>;
+  AlignmentGeometry alignment = Alignment.centerRight;  
+  final Timestamp minDate = doc["minDate"] as Timestamp;
+  final Timestamp maxDate = doc["maxDate"] as Timestamp;
+  final List<String> months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  late Color? color;
+  late Radius bottomLeftTeardrop;
+  late Radius bottomRightTeardrop;
+  if(doc["reciverID"]==widget.reciverEmail){  alignment = Alignment.centerRight; color = Colors.grey[200]; bottomLeftTeardrop = const Radius.circular(20) ; bottomRightTeardrop = const Radius.circular(0); }else{alignment = Alignment.centerLeft; color = Colors.blue[100]; bottomLeftTeardrop = const Radius.circular(0) ; bottomRightTeardrop = const Radius.circular(20);}  
+  return //const Text("Schedule Request\n from minDate\n to maxDate");
+  Container( alignment: alignment, padding: const EdgeInsets.all(15),
+    child: Container(padding: const EdgeInsets.all(10), constraints: const BoxConstraints(minWidth: 50),
+    decoration: BoxDecoration( boxShadow: null, color: color, borderRadius: BorderRadius.only(topLeft: const Radius.circular(20), topRight: const Radius.circular(20), bottomLeft: bottomLeftTeardrop,  bottomRight: bottomRightTeardrop)  ), //BorderRadius.all(Radius.circular(18))
+    child: Text( "Schedule Request\n from: ${minDate.toDate().day} ${months[minDate.toDate().month]}\n to:     ${maxDate.toDate().day} ${months[maxDate.toDate().month]}" , textAlign: TextAlign.center,style: const TextStyle(color: Colors.black87, fontSize: 16, ), )),
+  );  
+}
+
 
 Widget messageBox(doc){
   doc as Map<String, dynamic>;  
@@ -131,16 +163,36 @@ Chats().sendMessage(widget.reciverEmail, _messageController.text, widget.roomID)
 
 }
 
-
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold( appBar: AppBar(title:  Text(widget.reciverEmail), backgroundColor: Colors.blue[50],),
     body: Center(child: Column(children: [
-          //Text(widget.roomID),
-          //OutlinedButton(onPressed: (){ Chats().someFunction(); }, child: const Text("run someFunction")),
+
           Expanded(child: Container(color: Colors.white, child: _someWidget())),
           const Divider(thickness: 1, indent: 10, endIndent: 10, height: 1),
-          TextField( cursorColor: Colors.black, controller: _messageController, decoration: InputDecoration(fillColor: const Color.fromARGB(255, 246, 251, 254), filled: true, contentPadding: const EdgeInsets.all(20),border: InputBorder.none,   hintText: "Type a message", suffixIcon: InkWell(child: const Icon(Ionicons.paper_plane_outline), onTap:(){sendMessage(); _messageController.clear();}   ,) ),  )
+          TextField( 
+            cursorColor: Colors.black, controller: _messageController, 
+            decoration: InputDecoration(
+              fillColor: const Color.fromARGB(255, 246, 251, 254), filled: true, 
+              contentPadding: const EdgeInsets.all(20),border: InputBorder.none,   
+              hintText: AppLocalizations.of(context)!.tagChatTypeamessage, 
+              suffixIcon: 
+              SizedBox( width: 100,
+                child: Row(  mainAxisAlignment: MainAxisAlignment.spaceEvenly, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    InkWell(onTap:(){sendMessage(); _messageController.clear();},child: const Icon(Ionicons.paper_plane_outline), ),
+                    InkWell(onTap: ()async{ await Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                      return CalenderPage(calendarController: ChatSection.calendarController, chatRoomID: widget.roomID, reciverEmail: widget.reciverEmail,);
+                      
+                      })).then((value){                       
+                       print( "Calender minDate: ${ChatSection.calendarController.rangeMinDate!.day}, maxDate: ${ChatSection.calendarController.rangeMaxDate!.day}" );
+                       
+                       });},
+                      child: const Icon(Icons.schedule),)
+                  ],),
+              )
+               ),
+              )
         ],
       ),
     ),
@@ -149,7 +201,30 @@ Chats().sendMessage(widget.reciverEmail, _messageController.text, widget.roomID)
   }
 }
 
+//CalendarDatePicker(initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 31)), onDateChanged: (value){}),
 
+class CalenderPage extends StatelessWidget {
+  final CleanCalendarController calendarController;
+  final String reciverEmail;
+  final String chatRoomID;
+
+  const CalenderPage({super.key, required this.calendarController, required this.chatRoomID, required this.reciverEmail,});
+
+  @override
+  Widget build(BuildContext context) {
+    
+    return Scaffold(appBar: AppBar(backgroundColor: Colors.white, surfaceTintColor: Colors.transparent,),
+      body: Container( color: Colors.white, 
+        child: ScrollableCleanCalendar(calendarController: calendarController, layout:Layout.BEAUTY, ),
+      ),
+      floatingActionButton: FloatingActionButton(onPressed: ()async{ final DateTime? minDate = calendarController.rangeMinDate;  final DateTime? maxDate = calendarController.rangeMaxDate;
+        if(minDate!=null && maxDate!=null){
+        await Chats().sendScheduleRequest(reciverEmail, chatRoomID, minDate, maxDate).then((value){ print("floting button  ${calendarController.minDate}, ${calendarController.maxDate}"); Navigator.of(context).pop();} );}
+            },backgroundColor: Colors.deepPurple,  child: const Text("Request Date", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold), textAlign: TextAlign.center,),),
+      );
+  }
+}
+ 
 
 
 
@@ -211,6 +286,22 @@ return chatRoomsIDs;
 
 }
 
+Future<void> sendScheduleRequest(String reciverEmail,  String chatRoomID, DateTime minDate,DateTime maxDate)async{
+  final String senderEmail = _firebaseAuth.currentUser!.email.toString();
+  final Timestamp timeStamp = Timestamp.now();
+//print("sendScheduleRequest: $minDate, $maxDate");
+  Map<String,dynamic> scheduleRequestMSG = {
+    "senderEmail":senderEmail,
+    "reciverID":reciverEmail,    
+    "minDate":minDate,
+    "maxDate":maxDate,
+    "timeStamp":timeStamp
+    };
+
+
+  await _fireStore.collection("chat_rooms").doc(chatRoomID,).collection("message").add(scheduleRequestMSG); 
+
+}
   
 }
 

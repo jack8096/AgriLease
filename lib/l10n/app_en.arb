@@ -1,0 +1,50 @@
+{
+    "language":"English",
+
+
+
+    "tagProfile":"Profile",
+    "tagContact":"Contact",
+    "tagAddress":"Address",
+    "tagEmail":"Email",
+    "tagLoginProfile":"Login profile",
+    "tagLogOut":"Log Out",
+    "tagLanguage":"Language",
+    "tagMarathi":"मराठी",
+    "tagadministrative":"administrative",
+    "tagAdminLogin":"Admin Login",
+    "tagNotLoggedInMSG":"you are not logged in as an administrator",
+
+    "tagAdmin":"Admin",
+    "tagAlertDeleteMSG":"Are you sure you want to delete?",
+    "tagCancel":"Cancel",
+    "tagDelete":"Delete",
+
+
+    "tagMyAds":"My Ads",
+    "tagNoAdsMSG":"You haven't listed anything yet",
+    "tagDelete":"Delete",
+    "tagTitle":"Title",
+    "tagPrice":"Price",
+    "tagDescription":"Description",
+    "tagLocation":"Location",
+    "tagSelectImage":"Select Image",
+    "tagPublish":"Publish",
+
+
+    "tagTitleErrorMSG":"Enter Ad's Title",
+    "tagPriceErrorMSG":"Enter a Valid Number",
+    "tagDescriptionErrorMSG":"Enter Description",
+    "tagLocationErrorMSG":"Enter a Valid Location",
+    "tagContactErrorMSG":"Enter Contact Number",
+
+    "tagChat":"Chat",
+    "tagChatLoadingMSG":"Chat list is empty, try chating...",
+    "tagChatTypeamessage":"Type a message",
+
+    "tagHome":"Home",
+    "tagCall":"Call",
+
+    "tagSearch":"Search"
+    
+}

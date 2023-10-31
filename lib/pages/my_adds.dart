@@ -11,7 +11,7 @@ import 'package:firebase_database/firebase_database.dart';
 
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FireStore {
   static  dynamic emailID = FireBaseAuthentication.emailID;
@@ -33,7 +33,7 @@ class FireStore {
     emailID = FireBaseAuthentication.emailID;
     late dynamic productDetailIDList;
     if(!FireBaseAuthentication.isSignedIn){print('if statement signed in false');
-      await FireBaseAuthentication.signInWithGooggle(); }
+      await FireBaseAuthentication().signInWithGooggle(); }
     await FirebaseFirestore.instance.collection('users_published_ad').doc(emailID).get().then( (DocumentSnapshot doc){ productDetailIDList = doc.data() as Map<String, dynamic>; } );
     productDetailIDList = productDetailIDList.keys.toList();
     print(productDetailIDList);
@@ -94,7 +94,7 @@ class MyAdsPage extends StatelessWidget {
 
     return Scaffold(
       
-      appBar: AppBar(surfaceTintColor: Colors.white, backgroundColor: Colors.red[50], title: const Text("My Ads", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),),),
+      appBar: AppBar(surfaceTintColor: Colors.white, backgroundColor: Colors.red[50], title: Text(AppLocalizations.of(context)!.tagMyAds , style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),),),
       body: //!FireBaseAuthentication.isSignedIn? Center(child: Column(children: [const Text("You have not signed in yet,sign in to see your previous Ad's"), GestureDetector(onTap: (){}, child: GoogleButton())]),):
       
       const ShowAds(),
@@ -102,7 +102,7 @@ class MyAdsPage extends StatelessWidget {
       floatingActionButton: FilledButton(  style: ButtonStyle(padding: MaterialStateProperty.all(const EdgeInsets.all(20)), backgroundColor: MaterialStateProperty.all(Colors.red[50]), shape: MaterialStateProperty.all( const CircleBorder())),
       onPressed: ()async{ //if(!FireBaseAuthentication.isSignedIn){await FireBaseAuthentication.signInWithGooggle();}  //await MyAds.fetchProductDetal();
         if(FireBaseAuthentication.isSignedIn){print('signed in'); Navigator.push(context,  MaterialPageRoute(builder: (context) {return const AddAdSecton();}));}
-      else{print('signed out'); alertDialog(context);   FireBaseAuthentication.signInWithGooggle(); print('isSignedIn: ${FireBaseAuthentication.isSignedIn}');}  //FireBaseAuth.signInWithGooggle();
+      else{print('signed out'); alertDialog(context);   FireBaseAuthentication().signInWithGooggle(); print('isSignedIn: ${FireBaseAuthentication.isSignedIn}');}  //FireBaseAuth.signInWithGooggle();
 
 
         }, 
@@ -115,7 +115,7 @@ class MyAdsPage extends StatelessWidget {
   Future<dynamic> alertDialog(BuildContext context) {
     return showDialog (  context: context,  builder: (BuildContext context) =>   AlertDialog(
         title: const Text("you aren't signed in yet,\nsign in to publish ad"),
-        actions: [GestureDetector( onTap: ()async{print('google button'); try{FireBaseAuthentication.signInWithGooggle(); Navigator.of(context).pop();}catch(e){print(e);}  },child: const GoogleButton())],
+        actions: [GestureDetector( onTap: ()async{print('google button'); try{FireBaseAuthentication().signInWithGooggle(); Navigator.of(context).pop();}catch(e){print(e);}  },child: const GoogleButton())],
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         shape: const RoundedRectangleBorder(
@@ -165,6 +165,20 @@ someFunction3(value, index )async{ print("$value $index"); try{
   }
 
   ListView AdsListView() {
+
+Future<dynamic> alertDeleteDialog(BuildContext context, value, index) => showDialog(context: context, builder: (context){return AlertDialog(
+  backgroundColor: Colors.white, surfaceTintColor: Colors.transparent,
+  title: const Text("Are you sure you want to delete?"),
+  actions: [
+    FilledButton( onPressed: (){ Navigator.of(context).pop(); },    style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))), backgroundColor: MaterialStateProperty.all(Colors.white)), child: const Text("Cancel", style: TextStyle(color: Colors.grey),)),
+    FilledButton( onPressed: ()async{Navigator.of(context).pop(); someFunction3(value, index); someFunction();  },
+        style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))), backgroundColor: MaterialStateProperty.all(Colors.red[800])), child: const Text("Delete")),
+    
+  ],
+  
+  );});
+
+
     return ListView.builder(padding: const EdgeInsets.all(20), itemCount: productDetailList.length, itemBuilder: ((context, index) {return GestureDetector(onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return FullProductDetail(appBarBackGroundColor: Colors.red[50], gradientColor: const [Color.fromRGBO(255, 235, 238, 1), Color.fromRGBO(255, 245, 233, 1)], image: someFunction1(productDetailList[index].image), price: productDetailList[index].price, title: productDetailList[index].title, description: productDetailList[index].description, email: productDetailList[index].email??"email", location: productDetailList[index].location??"location", contact: productDetailList[index].contact);}));},
       child: Card(surfaceTintColor: Colors.white, color: Colors.white, child: Row( //Dismissible(key: UniqueKey(), onDismissed: (direction){ setState((){productDetailList.removeAt(index);}); }, 
      children: [
@@ -181,10 +195,16 @@ someFunction3(value, index )async{ print("$value $index"); try{
             ],
           ),
         ),
-        Row( children: [PopupMenuButton(icon: const Icon(Ionicons.ellipsis_vertical, color: Colors.black,), color: Colors.red[50], surfaceTintColor: Colors.white, onSelected: (value){someFunction3(value, index); someFunction();},  itemBuilder: (context){return[ const PopupMenuItem( value: 0, child: Text("Delete", textAlign:TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),))];})],),
+        Row( children: [PopupMenuButton(icon: const Icon(Ionicons.ellipsis_vertical, color: Colors.black,), color: Colors.red[50], surfaceTintColor: Colors.white, onSelected: (value){ alertDeleteDialog(context, value, index);  },  itemBuilder: (context){return[ PopupMenuItem( value: 0, child: Text(AppLocalizations.of(context)!.tagDelete, textAlign:TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),))];})],),
      ],
      )),
     );}  ));
+  
+  
+  
+  
+  
+  
   }
 }
 
@@ -204,7 +224,7 @@ class NotpublishedAd extends StatelessWidget {
           border: Border.all(color: Colors.black, width: 2), borderRadius: const BorderRadius.all(Radius.circular(6)) ),  child: Center(
           child: Column(children: [
             Expanded(child: Container( decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('assets/publications.webp'), fit: BoxFit.fitHeight)), )),
-            const Text("You haven't listed anything yet", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), ),
+            Text(AppLocalizations.of(context)!.tagNoAdsMSG, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), ),
             ],),),
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:agrilease/pages/chats.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 class FullProductDetail extends StatelessWidget {final Color? appBarBackGroundColor; final List<Color> gradientColor; final String image; final String price; final String title; final String description; final String email;  final String contact; final String location;
@@ -12,18 +13,13 @@ final  backgroundcolor = const Color.fromARGB(255, 255, 249, 255,);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold( appBar: AppBar( backgroundColor: appBarBackGroundColor,
-      //title: const Text('Full product detail page', style: TextStyle(color: Color.fromARGB(255, 255, 249, 255,)),),  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: Container(  decoration: BoxDecoration( gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: gradientColor) ),
+    return Scaffold( 
+      appBar: AppBar( backgroundColor: appBarBackGroundColor, surfaceTintColor: Colors.transparent,),
+      body: Container(  color: Colors.white,
         child: ListView(padding: const EdgeInsets.only(left: 10, right: 10, top: 5,),
           children: [
-            //AspectRatio(aspectRatio: 1.3, child: Container(height: 200, decoration: BoxDecoration( color: Colors.grey[850], borderRadius: BorderRadius.circular(4), border: Border.all(color: Colors.black12,)), child: AspectRatio(aspectRatio: 1.56, child: Image.network(image, fit: BoxFit.fitWidth,)), )),
-            // AspectRatio(aspectRatio: 1.3, child: Card(color: Colors.black45, surfaceTintColor: Colors.transparent,  child: Padding(padding: const EdgeInsets.all(2.0),child: Card(clipBehavior: Clip.hardEdge, child: Image.network(image, fit: BoxFit.fitWidth,)),
-            // )),),
             Card(clipBehavior: Clip.hardEdge, child: Image.network(image, fit: BoxFit.fitWidth,)),
             TitleCard(title: title, price: price, location: location, email: email,),//title price 
-            //const Divider(color: Colors.black45, thickness: 1, indent: 8, endIndent: 8,),
             DescriptionCard(description: description),// description
             AddressCard(address: location,),
             
@@ -36,30 +32,38 @@ final  backgroundcolor = const Color.fromARGB(255, 255, 249, 255,);
     bottomNavigationBar: SafeArea(child: Container( color: Colors.white,
       child: AspectRatio(aspectRatio: 5.85, child:Padding( padding: const EdgeInsets.all(8),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
-          children: [ OutlinedButton( style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.black),   shape: MaterialStateProperty.all<RoundedRectangleBorder>( RoundedRectangleBorder( borderRadius: BorderRadius.circular(6.0),)),
+          children: [ OutlinedButton( style: ButtonStyle(    shape: MaterialStateProperty.all<RoundedRectangleBorder>( RoundedRectangleBorder(side: const BorderSide( color: Color.fromRGBO(102, 187, 106, 1)), borderRadius: BorderRadius.circular(6.0),)),
            ),
                         
                         onPressed: ()async{ 
                           print("pressed chat button");
                           if(!FireBaseAuthentication.isSignedIn){
-                            await FireBaseAuthentication.signInWithGooggle(); try{print("us: ${FireBaseAuthentication.emailID} them: ${email} ");}catch(e){print(e);}
+                            await FireBaseAuthentication().signInWithGooggle(); try{print("us: ${FireBaseAuthentication.emailID} them: ${email} ");}catch(e){print(e);}
                             }else{ try{print("us: ${FireBaseAuthentication.emailID} them: ${email} ");
                             await Chats().createChatRoom(FireBaseAuthentication.emailID, email).then((value){  
                               Navigator.of(context).push(MaterialPageRoute(builder: (context){return ChatSection(roomID: value, reciverEmail: email);}));
                                });
                             }catch(e){print(e);} } 
-                            
-                            
-                        
-                        
-                        
-                        }, child: const Text('Chat') ),
-                      ElevatedButton( style: ButtonStyle( backgroundColor: MaterialStateProperty.all<Color>(Colors.black), foregroundColor: MaterialStateProperty.all<Color>(Colors.white),  shape: MaterialStateProperty.all<RoundedRectangleBorder>( RoundedRectangleBorder( borderRadius: BorderRadius.circular(6.0),))),
-                        onPressed: (){ launchUrl(Uri(scheme: 'tel', path: contact)); }, child: const Text("Call")),
+
+                        }, child: Text(AppLocalizations.of(context)!.tagChat, style: TextStyle(color: Colors.green[400]),) ),
+                      ElevatedButton( style: ButtonStyle( backgroundColor: MaterialStateProperty.all<Color>(const Color.fromRGBO(102, 187, 106, 1)), foregroundColor: MaterialStateProperty.all<Color>(Colors.white),  shape: MaterialStateProperty.all<RoundedRectangleBorder>( RoundedRectangleBorder( borderRadius: BorderRadius.circular(6.0),))),
+                        onPressed: (){ launchUrl(Uri(scheme: 'tel', path: contact)); }, child: Text(AppLocalizations.of(context)!.tagCall)),
            ]            
         ),
       ) ,),
     )),
+    floatingActionButton: FloatingActionButton(onPressed: ()async{
+
+        await Chats().createChatRoom(FireBaseAuthentication.emailID, email).then((value){  
+        Navigator.of(context).push(MaterialPageRoute(builder: (context){
+          return CalenderPage(calendarController: ChatSection.calendarController, chatRoomID: value, reciverEmail: email);
+          //ChatSection(roomID: value, reciverEmail: email);
+          }  ));
+        
+        });
+
+
+    }, backgroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)), child: const Icon(Icons.schedule_outlined)),
     );
   }
 
@@ -95,7 +99,7 @@ class DescriptionCard extends StatelessWidget {
     Card( surfaceTintColor: Colors.transparent, color: Colors.white,
       child:Padding(  padding: const EdgeInsets.all(15), 
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text('Description', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.normal )), 
+        Text(AppLocalizations.of(context)!.tagDescription, style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.normal )), 
         Text(description, style: const TextStyle(fontSize: 12, color: Colors.black54, overflow: null), )]))));
   }
 }
@@ -129,7 +133,7 @@ class TitleCard extends StatelessWidget {
           AutoSizeText(title, style: TextStyle(color: Colors.grey[850], fontSize: 22, fontWeight: FontWeight.normal ),), 
           Text('\u20B9 $price', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500 ),),
           Text(email,  style: const TextStyle(color: Colors.black38, overflow: TextOverflow.ellipsis), ), //maxFontSize: 12, minFontSize:10,
-          Text(location,  style: const TextStyle(color: Colors.black38, overflow: TextOverflow.ellipsis), ), //maxFontSize: 12, minFontSize:10,
+          //Text(location,  style: const TextStyle(color: Colors.black38, overflow: TextOverflow.ellipsis), ), //maxFontSize: 12, minFontSize:10,
           ],),
         ),
       ));
@@ -146,7 +150,7 @@ class AddressCard extends StatelessWidget {final String address;
     child: Padding(padding: const EdgeInsets.all(15), 
     child: Column( crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [ 
-      Text("Address", style: TextStyle(color: Colors.grey[850], fontWeight: FontWeight.normal, fontSize: 20),),
+      Text(AppLocalizations.of(context)!.tagAddress, style: TextStyle(color: Colors.grey[850], fontWeight: FontWeight.normal, fontSize: 20),),
       Text(address, style: const TextStyle(fontSize: 12, color: Colors.black54, overflow: null), )
     ],),),),);
   }

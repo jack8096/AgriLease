@@ -2,6 +2,7 @@ import 'package:agrilease/login_api.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:agrilease/pages/profile_settings_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -31,7 +32,7 @@ static String? profilePhotoUrl;
   profilePhotoUrl = await FireBaseAuthentication.photoURL;
   name = await FireBaseAuthentication.accountInfo?.displayName??"None";
   email = await FireBaseAuthentication.emailID;
-  await SaveSetting().fetchProfieData().then((value){address= value!["address"]??address; contact = value["contact"]??contact;} );
+  await SaveSetting().fetchProfieData().then((value){  if(value!=null){address= value["address"]??address; contact = value["contact"]??contact;}else{return 0;}   } );
   return "setProfileInfo run $name $email $profilePhotoUrl ";
 
 }}
@@ -105,8 +106,8 @@ void googleSignInDialog()async{ if(FireBaseAuthentication.isSignedIn){return ;}
           children: [
             Container(margin: const EdgeInsets.fromLTRB(0, 64, 0, 0), child: ProfileCard(name: name, profilePhotoUrl: profilePhotoUrl,)),
             AddressCard(address: address),
-            CommanCard(text: email, label: "Email", icon: Ionicons.mail_outline,),
-            CommanCard(text: contact, label: "Contact", icon: Icons.phone),
+            CommanCard(text: email, label: AppLocalizations.of(context)!.tagEmail, icon: Ionicons.mail_outline,),
+            CommanCard(text: contact, label: AppLocalizations.of(context)!.tagContact, icon: Icons.phone),
           ],
         ),),
     );
@@ -118,7 +119,7 @@ class AlertGoogleSignInDialog extends StatelessWidget {
     super.key,
   });
   
-void someFunction(context)async{ await FireBaseAuthentication.signInWithGooggle();  print('object');
+void someFunction(context)async{ await FireBaseAuthentication().signInWithGooggle();  print('object');
                             if(FireBaseAuthentication.isSignedIn){await ProfileInfo.setProfileInfo(); return Navigator.of(context).pop();}
                              }
   @override
@@ -164,7 +165,7 @@ class AddressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(aspectRatio: 1.9, child: Card(color: Colors.grey[100], surfaceTintColor:Colors.white, child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Row(children: [Icon(Ionicons.location_outline), Text("Address", style: TextStyle(color: Colors.black54, fontSize: 16, fontWeight: FontWeight.bold), )], ), Text("\n$address", maxLines: 4, overflow:TextOverflow.ellipsis , style: const TextStyle(color: Colors.black87, fontSize: 16, ),) ],),
+    return AspectRatio(aspectRatio: 1.9, child: Card(color: Colors.grey[100], surfaceTintColor:Colors.white, child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Row(children: [Icon(Ionicons.location_outline), Text(AppLocalizations.of(context)!.tagAddress, style: TextStyle(color: Colors.black54, fontSize: 16, fontWeight: FontWeight.bold), )], ), Text("\n$address", maxLines: 4, overflow:TextOverflow.ellipsis , style: const TextStyle(color: Colors.black87, fontSize: 16, ),) ],),
     ),));
   }
 }
@@ -194,10 +195,13 @@ class ProfilePhoto extends StatelessWidget {final String? profilePhotoUrl;
     super.key,
   });
 
-bool isProfilePhotoUrlNULL = false;  
-String defaultProfilePhotoUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftoppng.com%2Fpublic%2Fuploads%2Fpreview%2Finstagram-default-profile-picture-11562973083brycehrmyv.png&f=1&nofb=1&ipt=b908581363375011bb93f35f0062299ee5f34cc57f71eb9ea05c7c8f5068bcdf&ipo=images";
+
   @override
   Widget build(BuildContext context) {
+bool isProfilePhotoUrlNULL = false;  
+String defaultProfilePhotoUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftoppng.com%2Fpublic%2Fuploads%2Fpreview%2Finstagram-default-profile-picture-11562973083brycehrmyv.png&f=1&nofb=1&ipt=b908581363375011bb93f35f0062299ee5f34cc57f71eb9ea05c7c8f5068bcdf&ipo=images";
+
+
     if(profilePhotoUrl == null) {isProfilePhotoUrlNULL = true;}
     return Container( height: 100,width: 100, decoration: BoxDecoration( color: Colors.blue[50], shape: BoxShape.circle, border: Border.all(color: const Color.fromARGB(255, 40, 42, 88),) ,
     image: isProfilePhotoUrlNULL? null: DecorationImage(fit: BoxFit.fitHeight,  image: NetworkImage(profilePhotoUrl??defaultProfilePhotoUrl)) 

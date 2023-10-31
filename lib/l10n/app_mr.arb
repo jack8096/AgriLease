@@ -1,0 +1,48 @@
+{
+    "language":"Marathi",
+
+
+
+    "tagProfile":"प्रोफाइल",
+    "tagContact":"संपर्क",
+    "tagAddress":"पत्ता",
+    "tagEmail":"ईमेल",
+    "tagLoginProfile":"लॉगिन प्रोफाइल",
+    "tagLogOut":"लॉग आऊट करा",
+    "tagLanguage":"भाषा",
+    "tagMarathi":"Marathi",
+
+    "tagMyAds":"माझ्या जाहिराती",
+    "tagNoAdsMSG":"अजून काही ही सूचीबद्ध केलेलं नाही",
+    "tagDelete":"डिलीट करा",
+    "tagTitle":"जाहिरातीचे नाव",
+    "tagPrice":"किंमत",
+    "tagDescription":"वर्णन",
+    "tagLocation":"तुमचा पत्ता",
+    "tagSelectImage":"फोटो निवडा",
+    "tagPublish":"जाहिरात प्रकाशित करा",  
+    "tagadministrative":"प्रशासकीय",
+    "tagAdminLogin":"प्रशासकीय लॉगिन",
+    "tagNotLoggedInMSG":"आपण प्रशासक म्हणून लॉग इन केलेले नाही",          
+
+    "tagAdmin":"प्रशासन विभाग",
+    "tagAlertDeleteMSG":"डिलीट करायचे आहे याची खात्री आहे का?",
+    "tagCancel":"रद्द करा",
+    "tagDelete":"डिलीट करा",    
+
+    "tagTitleErrorMSG":"जाहिरात नाव प्रविष्ट करा",
+    "tagPriceErrorMSG":"वैध क्रमांक प्रविष्ट करा",
+    "tagDescriptionErrorMSG":"वर्णन प्रविष्ट करा",
+    "tagLocationErrorMSG":"पत्ता प्रविष्ट करा",
+    "tagContactErrorMSG":"वैध संपर्क क्रमांक प्रविष्ट करा",
+
+
+    "tagChat":"चॅट",
+    "tagChatLoadingMSG":"चॅट लिस्ट रिकामी आहे, चॅटिंग ट्राय करा...",
+    "tagChatTypeamessage":"मेसेज टाईप करा",
+
+    "tagHome":"मुख्य विभाग",
+    "tagCall":"कॉल करा",
+
+    "tagSearch":"शोधा"
+}

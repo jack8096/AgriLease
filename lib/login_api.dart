@@ -1,4 +1,5 @@
 
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -8,16 +9,16 @@ static late FirebaseAuth fireBaseAuthInstance;
 static late String emailID;
 static late GoogleSignInAccount? accountInfo;
 static late dynamic photoURL;
-
+final GoogleSignIn googleSignIn = GoogleSignIn();
 
 static void  main()async{
   fireBaseAuthInstance = FirebaseAuth.instance;
   fireBaseAuthInstance.authStateChanges().listen((event) { if(event==null){isSignedIn = false;}else{print("this is event $event"); photoURL = event.photoURL;  isSignedIn=true;} });
   }
 
-static signInWithGooggle()async{
+signInWithGooggle()async{
   if(!FireBaseAuthentication.isSignedIn){FireBaseAuthentication.main();}
-  final  GoogleSignIn googleSignIn = GoogleSignIn();
+  
   final  GoogleSignInAccount? account = await googleSignIn.signIn();
    final gAuthentication = await account?.authentication;
    final credential = GoogleAuthProvider.credential( idToken: gAuthentication?.idToken, accessToken: gAuthentication?.accessToken );
@@ -33,5 +34,6 @@ static signInWithGooggle()async{
    
 }
 
-static dynamic userSignOut() async { await fireBaseAuthInstance.signOut(); }
+Future<dynamic> userSignOut() async {
+  await googleSignIn.disconnect();  await fireBaseAuthInstance.signOut(); return 0;}
 }

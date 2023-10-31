@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ionicons/ionicons.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UploadData {
 
@@ -82,9 +82,9 @@ class _MyWidgetState extends State<AddAdSecton> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.white),
+      appBar: AppBar(backgroundColor: Colors.white, surfaceTintColor: Colors.transparent,),
       body: Container(padding: const EdgeInsets.all(10),  color: Colors.white,
-      child: ListView( children: [const InputInfoSecton(),] )
+      child: ListView( children: const [InputInfoSecton(),] )
       ),
 
     );
@@ -149,15 +149,15 @@ child: Padding(padding: const EdgeInsets.all(20),
   
         children: [
   
-        labelText("Title"),       TextFormField( decoration: inputDecoration(titleValidate? Colors.green:Colors.white),  controller: title,       validator: (value) { if(value!=''   ){ setState(() {titleValidate=true;});              return null; }else{ setState(() {titleValidate=false;}); return "Enter Ad's Title"; }  }, ), //value.runtimeType==String);
+        labelText(AppLocalizations.of(context)!.tagTitle),       TextFormField( decoration: inputDecoration(titleValidate? Colors.green:Colors.white),  controller: title,       validator: (value) { if(value!=''   ){ setState(() {titleValidate=true;});              return null; }else{ setState(() {titleValidate=false;}); return AppLocalizations.of(context)!.tagTitleErrorMSG; }  }, ), //value.runtimeType==String);
   
-        labelText("Price \u{20B9}"),       TextFormField( inputFormatters: [FilteringTextInputFormatter.digitsOnly], decoration: inputDecoration(  priceValidate? Colors.green:Colors.white),  controller: price,       validator: (value) { try {int.parse(value??"None"); setState((){priceValidate = true;});return null; } catch (e) { setState((){priceValidate = false;}); } return 'Enter a Valid Number'; }, ), //value.runtimeType==String);
+        labelText("${AppLocalizations.of(context)!.tagPrice} \u{20B9}"),       TextFormField( inputFormatters: [FilteringTextInputFormatter.digitsOnly], decoration: inputDecoration(  priceValidate? Colors.green:Colors.white),  controller: price,       validator: (value) { try {int.parse(value??"None"); setState((){priceValidate = true;});return null; } catch (e) { setState((){priceValidate = false;}); } return AppLocalizations.of(context)!.tagPriceErrorMSG; }, ), //value.runtimeType==String);
   
-        labelText("Description"), TextFormField( decoration: inputDecoration(desValidate?   Colors.green:Colors.white),  controller: description, validator: (value) { if(value!='' ){ setState(() {desValidate=true;});                  return null; }else{ setState(() {desValidate=false;}); } return 'Enter Description';}, ), //value.runtimeType==String);
+        labelText(AppLocalizations.of(context)!.tagDescription), TextFormField( decoration: inputDecoration(desValidate?   Colors.green:Colors.white),  controller: description, validator: (value) { if(value!='' ){ setState(() {desValidate=true;});                  return null; }else{ setState(() {desValidate=false;}); } return AppLocalizations.of(context)!.tagDescriptionErrorMSG;}, ), //value.runtimeType==String);
   
-        labelText("Locaton"),     TextFormField( decoration: inputdecoration(locValidate?   Colors.green:Colors.white),  controller: location,    validator: (value) { if(value!=''            ){ setState(() {locValidate=true;});       return null; }else{ setState(() {locValidate=false;}); } return 'Enter a Valid Location'; }, ), //value.runtimeType==String);
+        labelText(AppLocalizations.of(context)!.tagLocation),     TextFormField( decoration: inputdecoration(locValidate?   Colors.green:Colors.white),  controller: location,    validator: (value) { if(value!=''            ){ setState(() {locValidate=true;});       return null; }else{ setState(() {locValidate=false;}); } return AppLocalizations.of(context)!.tagLocationErrorMSG; }, ), //value.runtimeType==String);
   
-        labelText("Contact"),     TextFormField( inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10), ], decoration: inputDecoration(contValidate?  Colors.green:Colors.white),  controller: contact,     validator: (value) { try {int.parse(value??"None"); setState((){contValidate = true;}); return null; } catch (e) { setState((){contValidate = false;}); } return 'Enter Contact Nummber'; }, ), //value.runtimeType==String);
+        labelText(AppLocalizations.of(context)!.tagContact),     TextFormField( inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10), ], decoration: inputDecoration(contValidate?  Colors.green:Colors.white),  controller: contact,     validator: (value) {  try { if(value!.length==10){ setState((){contValidate = true;});  return null;} } catch (e) { setState((){contValidate = false;}); } return AppLocalizations.of(context)!.tagContactErrorMSG; }, ), //value.runtimeType==String);
   
         Row( mainAxisAlignment: MainAxisAlignment.start,
   
@@ -174,7 +174,7 @@ child: Padding(padding: const EdgeInsets.all(20),
   InputDecoration inputDecoration(conditionalStatment) => InputDecoration( suffixIcon: const Icon(Ionicons.checkmark_circle_outline), suffixIconColor: conditionalStatment, contentPadding: const EdgeInsets.all(8), border: const OutlineInputBorder(), focusedBorder: const OutlineInputBorder(borderSide: BorderSide(width: 2, color: Colors.black))  );
 
   selectImageButton() {
-    return Container(margin: const EdgeInsets.only(top: 10, bottom: 10), child: OutlinedButton.icon( onPressed: (){ setStateisImageSelected();   }, style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))))), label: const Text('Select Image', style: TextStyle(color: Colors.black),), icon: const Icon(Ionicons.camera_outline, color: Colors.black,),));
+    return Container(margin: const EdgeInsets.only(top: 10, bottom: 10), child: OutlinedButton.icon( onPressed: (){ setStateisImageSelected();   }, style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))))), label: Text(AppLocalizations.of(context)!.tagSelectImage, style: const TextStyle(color: Colors.black),), icon: const Icon(Ionicons.camera_outline, color: Colors.black,),));
   }
 
   FilledButton submitbutton() {return FilledButton( style:ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red[50]), shape: MaterialStateProperty.all<RoundedRectangleBorder>( RoundedRectangleBorder( borderRadius: BorderRadius.circular(6.0),))) ,
@@ -195,7 +195,7 @@ child: Padding(padding: const EdgeInsets.all(20),
 
 
 
-       }, child: const Text("Publish", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),), );
+       }, child: Text(AppLocalizations.of(context)!.tagPublish, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),), );
   }
 
 Dialog publishIndecator(){return  const Dialog(surfaceTintColor: Colors.transparent, backgroundColor: Color.fromARGB(0, 255, 255, 255), child: Center(child: CircularProgressIndicator(color: Color.fromRGBO(255, 235, 238, 1),) )); }

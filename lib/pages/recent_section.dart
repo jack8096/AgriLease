@@ -37,8 +37,7 @@ print('dataList: $dataList,');
 
 for( mapId in dataList.keys ){
 
-  productDetailList.add( ProductDetail(description: dataList[mapId]?['description']??'None', email: dataList[mapId]?["email"]??"None", title: dataList[mapId]['title']??'None', image: dataList[mapId]['image']??'None.jpeg', location: dataList[mapId]['location']??'None.', contact: dataList[mapId]['contact']??'None.',
-  price: dataList[mapId]['price']??'None') );
+  productDetailList.add( ProductDetail(description: dataList[mapId]?['description']??'None', email: dataList[mapId]?["email"]??"None", title: dataList[mapId]['title']??'None', image: dataList[mapId]['image']??'None.jpeg', location: dataList[mapId]['location']??'None.', contact: dataList[mapId]['contact']??'None.', price: dataList[mapId]['price']??'None') );
   fetchImage(dataList[mapId]['image']??'None.jpeg');
  }
  
@@ -108,7 +107,7 @@ final textColor = Colors.grey[850];
     String contact = FetchData.list[index].contact;
     String email = FetchData.list[index].email;
     return  GestureDetector( onTap: () { Navigator.push( context,
-              MaterialPageRoute(builder: (context) =>  FullProductDetail(appBarBackGroundColor: Colors.green[50],gradientColor:const  [Color.fromRGBO(232, 245, 233, 1), Color.fromRGBO(255, 245, 233, 1)],  image: image, price:price, title:title, description:description, email:email, location: location, contact: contact,)),); },
+              MaterialPageRoute(builder: (context) =>  FullProductDetail(appBarBackGroundColor: Colors.green[200],gradientColor:const  [Color.fromRGBO(232, 245, 233, 1), Color.fromRGBO(255, 245, 233, 1)],  image: image, price:price, title:title, description:description, email:email, location: location, contact: contact,)),); },
       //child: Container( height: 200,   decoration: BoxDecoration(color: Colors.white,  border: Border.all(color: Colors.black12)),//width: 150, 
 child: Card( surfaceTintColor: Colors.white, color: Colors.white,
          child: Column( mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
