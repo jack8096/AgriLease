@@ -51,6 +51,7 @@ dependencies:
   cloud_firestore: ^4.9.3
   localization: ^2.1.0
   scrollable_clean_calendar: ^1.4.1
+  flutter_rating_bar: ^4.0.1
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +81,9 @@ flutter:
     - assets/publications.webp
     - assets/ProfileBackgroudImage.jpg
     - assets/loginScreenPNG.png
+    - assets/LoginLogo.png
+    - assets/loginScreen01.jpg
+    - assets/android_neutral_sq_SI@4x.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

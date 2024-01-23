@@ -1,25 +1,30 @@
 import 'package:agrilease/login_api.dart';
 import 'package:agrilease/pages/chats.dart';
+import 'package:agrilease/pages/review_and_rating.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'calender_page.dart';
 
 
-class FullProductDetail extends StatelessWidget {final Color? appBarBackGroundColor; final List<Color> gradientColor; final String image; final String price; final String title; final String description; final String email;  final String contact; final String location;
-  const FullProductDetail({super.key,required this.appBarBackGroundColor, required this.gradientColor,  required  this.image, required this.price, required this.title, required this.description, required this.email, required this.location, required this.contact,});
+class FullProductDetail extends StatelessWidget {final double? rating; final int? reviews; final String? productID; final String image; final String price; final String? sellingPrice; final String title; final String description; final String email;  final String contact; final String location; //final Color? appBarBackGroundColor; final List<Color> gradientColor;
+  const FullProductDetail({super.key,  this.rating, this.reviews, this.productID,  required  this.image, required this.price, this.sellingPrice, required this.title, required this.description, required this.email, required this.location, required this.contact, }); //required this.appBarBackGroundColor, required this.gradientColor,
 final  backgroundcolor = const Color.fromARGB(255, 255, 249, 255,);
 
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {print("FullProductDetail:- sellingPrice: $sellingPrice");
+    //print("rating: $rating, reviews:$reviews, productID: $productID,");
     return Scaffold( 
-      appBar: AppBar( backgroundColor: appBarBackGroundColor, surfaceTintColor: Colors.transparent,),
+      appBar: AppBar( backgroundColor: Colors.green[300], surfaceTintColor: Colors.transparent,),
       body: Container(  color: Colors.white,
         child: ListView(padding: const EdgeInsets.only(left: 10, right: 10, top: 5,),
           children: [
             Card(clipBehavior: Clip.hardEdge, child: Image.network(image, fit: BoxFit.fitWidth,)),
-            TitleCard(title: title, price: price, location: location, email: email,),//title price 
+            TitleCard(rating: rating??0, reviews:reviews??0, productID: productID, title: title, price: price, sellPrice: sellingPrice, location: location, email: email,),//title price 
             DescriptionCard(description: description),// description
             AddressCard(address: location,),
             
@@ -95,7 +100,7 @@ class DescriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(aspectRatio: 2, child: //Container( decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
+    return AspectRatio(aspectRatio: 3, child: //Container( decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
     Card( surfaceTintColor: Colors.transparent, color: Colors.white,
       child:Padding(  padding: const EdgeInsets.all(15), 
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -107,31 +112,59 @@ class DescriptionCard extends StatelessWidget {
 
 
 class TitleCard extends StatelessWidget {
+    final double rating;
+    final int reviews;
+    final String? productID;
+    final String title;
+    final String price;
+    final String? sellPrice;
+    final String location;
+    final String email;
+
   const TitleCard({
     super.key,
+    this.sellPrice,
+    required this.rating,
+    required this.reviews,
+    required this.productID,
     required this.title,
     required this.price,
     required this.location,
-    required this.email,
+    required this.email, 
   });
 
-  final String title;
-  final String price;
-  final String location;
-  final String email;
+
+  //final int rating = 0;
+  
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    print("titleCard:- sellPrice: $sellPrice");
     return AspectRatio(aspectRatio: 2.5, 
       // child: Container( decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
       // padding: const EdgeInsets.all(15), 
+      
       child:
       Card( surfaceTintColor: Colors.transparent, color: Colors.white,
         child: Padding( 
           padding: const EdgeInsets.all(15), 
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceEvenly,  children: [
           AutoSizeText(title, style: TextStyle(color: Colors.grey[850], fontSize: 22, fontWeight: FontWeight.normal ),), 
-          Text('\u20B9 $price', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500 ),),
+          //Text('\u20B9 $price', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500 ),),
+          RichText(text: TextSpan(children: [
+             TextSpan(text: '\u20B9 $price', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500 ),),
+             const TextSpan(text: ' / Day', style: TextStyle(color: Colors.grey)),
+             if(sellPrice!=null)...[ TextSpan(text: " (Selling Price: $sellPrice)", style: TextStyle(color: Colors.grey,))],
+               ])),
+          Row(children: [
+            RatingBar(itemPadding: const EdgeInsets.all(1),ignoreGestures:true, allowHalfRating:true, initialRating:rating.toDouble(), itemSize:20, ratingWidget: RatingWidget(full: const Icon(Ionicons.star, color: Colors.amber,), half: const Icon(Ionicons.star_half, color: Colors.amber,), empty: const Icon(Ionicons.star_outline, color: Colors.amber,)), onRatingUpdate: (value){}),
+            Padding(padding: const EdgeInsets.fromLTRB(4, 0, 4, 0), child: Text(  rating.toString().replaceRange(3, null, "")  , style: const TextStyle(fontSize: 16,  color: Colors.amber),),),
+            
+            Padding(padding: const EdgeInsets.fromLTRB(10, 0, 4, 0),
+            child: InkWell( 
+              onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return ReviewAndRatingPage(productID: productID,);}));},
+              child: Text("($reviews reviews)", style: TextStyle(decoration: TextDecoration.underline, decorationColor: Colors.indigo[700], color: Colors.indigo[700] ),),),)
+
+          ],),
           Text(email,  style: const TextStyle(color: Colors.black38, overflow: TextOverflow.ellipsis), ), //maxFontSize: 12, minFontSize:10,
           //Text(location,  style: const TextStyle(color: Colors.black38, overflow: TextOverflow.ellipsis), ), //maxFontSize: 12, minFontSize:10,
           ],),
@@ -146,7 +179,7 @@ class AddressCard extends StatelessWidget {final String address;
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(aspectRatio: 2, child: Card( surfaceTintColor: Colors.transparent, color: Colors.white, 
+    return AspectRatio(aspectRatio: 3, child: Card( surfaceTintColor: Colors.transparent, color: Colors.white, 
     child: Padding(padding: const EdgeInsets.all(15), 
     child: Column( crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [ 

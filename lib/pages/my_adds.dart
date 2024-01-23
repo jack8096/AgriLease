@@ -4,6 +4,7 @@ import 'package:agrilease/login_api.dart';
 import 'package:agrilease/pages/ad_form.dart';
 import 'package:agrilease/pages/product_card_full_detail_page.dart';
 import 'package:agrilease/pages/recent_section.dart';
+import 'package:agrilease/pages/review_and_rating.dart';
 import 'package:agrilease/recent_section_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -55,22 +56,39 @@ class FireStore {
 
 class MyAds {
 static late dynamic productDetailIDList;
+static final Map ratingList = {};
+static final Map noOfReviews = {};
 
-static  fetchProductDetal()async{ //Future<List<ProductDetail>>
+static Future<List<SpecialProductDetail>>  fetchProductDetal()async{//Future<List<ProductDetail>>
+    List<SpecialProductDetail> productDetailList = [];
     productDetailIDList = await FireStore.fetchProductDetalID();
     final FirebaseDatabase snapShotData = await DatabaseInitiation().recentSectionData();
     List mapObjectList = [];
     for(String id in productDetailIDList){ 
     DataSnapshot data = await snapShotData.ref(id).get();
-    mapObjectList.add(data.value);}
-    
+    print("data: ${data.value}");
+    final detail = data.value as Map<dynamic, dynamic>;
+    //print("Future<List<SpecialProductDetail>>");
+    //print(detail);
+    mapObjectList.add(data.value);
+    var	priceType = detail["price"].runtimeType;
+	 
+	 var price = "null";
+	 var priceUnit;
+	 if(priceType != String){price = detail["price"]["price"]; priceUnit = detail["price"]["priceUnit"]; print(detail["price"]["price"]); }else{price = detail["price"];}
+	 
+	 print("priceInfo: {title: ${detail['title']}}, image: ${detail["image"]} price $price, priceRunType: $priceType");
 
-    List productDetailList = [];
-     for( dynamic data in mapObjectList ){ print("hi deepak 24"); print(data);
-      productDetailList.add( ProductDetail(image: data['image']??"None.jpeg", title: data['title'], price: data['price'], description: data['description'], email: data["email"], location: data['location'], contact: data["contact"]) );
-      }
-    print(productDetailList);
-    print("code block run");
+    productDetailList.add( SpecialProductDetail(productID: id, image:  detail['image'], title: detail['title'], price: price  , priceUnit: priceUnit,  sellingPrice: detail['sellingPrice'], description: detail['description'], email: detail["email"], location: detail['location'], contact: detail["contact"]) );
+
+    print("mapObjectList: $mapObjectList");
+    //mapObjectList.add({"productID":id});
+    ratingList[id] = await RatingsAndReviews(productID: id).rating;
+    noOfReviews[id] = await RatingsAndReviews(productID: id).noOfReviews;
+
+    
+    }
+    
     return productDetailList;
 
 }
@@ -94,12 +112,12 @@ class MyAdsPage extends StatelessWidget {
 
     return Scaffold(
       
-      appBar: AppBar(surfaceTintColor: Colors.white, backgroundColor: Colors.red[50], title: Text(AppLocalizations.of(context)!.tagMyAds , style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),),),
+      appBar: AppBar(surfaceTintColor: Colors.white, backgroundColor: Colors.green[300], title: Text(AppLocalizations.of(context)!.tagMyAds , style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),),),
       body: //!FireBaseAuthentication.isSignedIn? Center(child: Column(children: [const Text("You have not signed in yet,sign in to see your previous Ad's"), GestureDetector(onTap: (){}, child: GoogleButton())]),):
       
       const ShowAds(),
 
-      floatingActionButton: FilledButton(  style: ButtonStyle(padding: MaterialStateProperty.all(const EdgeInsets.all(20)), backgroundColor: MaterialStateProperty.all(Colors.red[50]), shape: MaterialStateProperty.all( const CircleBorder())),
+      floatingActionButton: FilledButton(  style: ButtonStyle(padding: MaterialStateProperty.all(const EdgeInsets.all(20)), backgroundColor: MaterialStateProperty.all(Colors.green[200]), shape: MaterialStateProperty.all( const CircleBorder())),
       onPressed: ()async{ //if(!FireBaseAuthentication.isSignedIn){await FireBaseAuthentication.signInWithGooggle();}  //await MyAds.fetchProductDetal();
         if(FireBaseAuthentication.isSignedIn){print('signed in'); Navigator.push(context,  MaterialPageRoute(builder: (context) {return const AddAdSecton();}));}
       else{print('signed out'); alertDialog(context);   FireBaseAuthentication().signInWithGooggle(); print('isSignedIn: ${FireBaseAuthentication.isSignedIn}');}  //FireBaseAuth.signInWithGooggle();
@@ -136,10 +154,16 @@ class ShowAds extends StatefulWidget {
 class _ShowAdsState extends State<ShowAds> {
 late dynamic productDetailList;
 bool isLoading = true;
-Future<void> someFunction()async{   productDetailList = await MyAds.fetchProductDetal(); print("someFunction"); setState(() { isLoading=false; });} //isLoading=false;
 
 
-someFunction1(name){  final  url = FetchData.imageURLMap[name]??"None.jpeg";  print("URL: $url"); return url; }
+Future<void> initFunction()async{  
+//  for(dynamic index in productDetailList){ rating[] =  await RatingsAndReviews(productID: productDetailList[index].productID).rating;  }
+  
+  
+    await MyAds.fetchProductDetal().then((value){ productDetailList=value;  setState(() { isLoading=false; });  }); } //isLoading=false;
+
+
+someFunction1(name){  final  url = recentAds.imageURLMap[name]??"None.jpeg";  print("Name: $name , URL: $url"); return url; }
 
 someFunction3(value, index )async{ print("$value $index"); try{
   final id = MyAds.productDetailIDList[index]; final firebaseApp = Firebase.app(); FirebaseDatabase.instanceFor(app: firebaseApp, databaseURL: 'https://agrilease-ecd0b-default-rtdb.asia-southeast1.firebasedatabase.app/').ref().child(id).remove(); 
@@ -148,16 +172,16 @@ someFunction3(value, index )async{ print("$value $index"); try{
 
 @override
   void initState(){
-  someFunction();
+  initFunction();
     super.initState();
   }
 
 
   @override
   
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  //print("productDetailList[0].productID: ${productDetailList[0].productID}");
   return 
-  RefreshIndicator(color: Colors.black, onRefresh: ()async{return someFunction();},
+  RefreshIndicator(color: Colors.black, onRefresh: ()async{return initFunction();},
   child: Container(color: Colors.white, child: !isLoading && FireBaseAuthentication.isSignedIn ?AdsListView():
    const NotpublishedAd()  ,)
   );
@@ -171,7 +195,7 @@ Future<dynamic> alertDeleteDialog(BuildContext context, value, index) => showDia
   title: const Text("Are you sure you want to delete?"),
   actions: [
     FilledButton( onPressed: (){ Navigator.of(context).pop(); },    style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))), backgroundColor: MaterialStateProperty.all(Colors.white)), child: const Text("Cancel", style: TextStyle(color: Colors.grey),)),
-    FilledButton( onPressed: ()async{Navigator.of(context).pop(); someFunction3(value, index); someFunction();  },
+    FilledButton( onPressed: ()async{Navigator.of(context).pop(); someFunction3(value, index); initFunction();  },
         style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))), backgroundColor: MaterialStateProperty.all(Colors.red[800])), child: const Text("Delete")),
     
   ],
@@ -179,7 +203,7 @@ Future<dynamic> alertDeleteDialog(BuildContext context, value, index) => showDia
   );});
 
 
-    return ListView.builder(padding: const EdgeInsets.all(20), itemCount: productDetailList.length, itemBuilder: ((context, index) {return GestureDetector(onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return FullProductDetail(appBarBackGroundColor: Colors.red[50], gradientColor: const [Color.fromRGBO(255, 235, 238, 1), Color.fromRGBO(255, 245, 233, 1)], image: someFunction1(productDetailList[index].image), price: productDetailList[index].price, title: productDetailList[index].title, description: productDetailList[index].description, email: productDetailList[index].email??"email", location: productDetailList[index].location??"location", contact: productDetailList[index].contact);}));},
+    return ListView.builder(padding: const EdgeInsets.all(20), itemCount: productDetailList.length, itemBuilder: ((context, index) {return GestureDetector(onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return FullProductDetail(productID:productDetailList[index].productID, rating: MyAds.ratingList[productDetailList[index].productID], reviews: MyAds.noOfReviews[productDetailList[index].productID], image: someFunction1(productDetailList[index].image), price: productDetailList[index].price, sellingPrice: productDetailList[index].sellingPrice, title: productDetailList[index].title, description: productDetailList[index].description, email: productDetailList[index].email??"email", location: productDetailList[index].location??"location", contact: productDetailList[index].contact);}));},
       child: Card(surfaceTintColor: Colors.white, color: Colors.white, child: Row( //Dismissible(key: UniqueKey(), onDismissed: (direction){ setState((){productDetailList.removeAt(index);}); }, 
      children: [
         
@@ -187,7 +211,7 @@ Future<dynamic> alertDeleteDialog(BuildContext context, value, index) => showDia
               Expanded(child: AspectRatio(aspectRatio: 1, child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceEvenly,  children: [ 
                 
                 Text(productDetailList[index].title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),), 
-                  Text("\u{20B9} ${productDetailList[index].price}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), ), 
+                  Text("\u{20B9} ${productDetailList[index].price} ${productDetailList[index].priceUnit == null?"":"per ${productDetailList[index].priceUnit}"}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), ), 
                     Text(productDetailList[index].description, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey, fontSize: 16, overflow: TextOverflow.ellipsis,), ),
                       Text("+91 ${productDetailList[index].contact}",  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey, fontSize: 14, overflow: TextOverflow.ellipsis,),)
      

@@ -1,6 +1,7 @@
 
 import 'package:agrilease/pages/product_card_full_detail_page.dart';
 import 'package:agrilease/pages/recent_section.dart';
+import 'package:agrilease/pages/review_and_rating.dart';
 import 'package:agrilease/recent_section_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -33,9 +34,11 @@ class _AdminPageState extends State<AdminPage> {
 dynamic loading =  const Dialog(surfaceTintColor: Colors.transparent, backgroundColor: Color.fromARGB(0, 255, 255, 255), child: Center(child: CircularProgressIndicator(color: Color.fromRGBO(255, 235, 238, 1),) )) ;
 
 int itemCount = 0;
-List<ProductDetail> productDetailList = [];
+List<SpecialProductDetail> productDetailList = [];
 List<dynamic> productDetailIDList = [];
 bool isLoading = true;
+Map<String, double> rating = {};
+Map<String, int> reviews = {};
 
 void refresh()async{
   productDetailList = [ ];
@@ -46,22 +49,29 @@ void refresh()async{
 Future<void> someFunction()async{
 FirebaseDatabase rtdbInstance = await DatabaseInitiation().recentSectionData();
 final data = rtdbInstance.ref();
-final DataSnapshot data1 = await data.get();
-final Map<dynamic, dynamic> data2 = data1.value as Map<dynamic, dynamic>;
-productDetailIDList = data2.keys.toList();
-//print("productDetailIDList: ${productDetailIDList}, runtimeType: ${productDetailIDList.runtimeType}" );
-itemCount = data2.keys.toList().length;
+final DataSnapshot snapshot = await data.get();
+final Map<dynamic, dynamic> productData = snapshot.value as Map<dynamic, dynamic>;
+productDetailIDList = productData.keys.toList();
 
-final data3 =  data2.values.toList()  ;
-for(Map<dynamic,dynamic> item in data3){
-productDetailList.add(ProductDetail(image: item["image"], title: item["title"], price: item["price"], description: item["description"], email: item["email"], location: item["location"], contact: item["contact"]));  
-String? imageURL = await ImageMapURL().imageURL(item["image"]);
-ImageMapURL.store[item["image"]] = imageURL!;
+itemCount = productData.keys.toList().length;
+
+//final data3 =  data2.values.toList();
+
+
+for(dynamic id in productDetailIDList){
+print(productData[id]);
+
+productDetailList.add(SpecialProductDetail(productID: id, image: productData[id]["image"], title: productData[id]["title"], price: productData[id]["price"], sellingPrice: productData[id]["sellingPrice"], description: productData[id]["description"], email: productData[id]["email"], location: productData[id]["location"], contact: productData[id]["contact"]));  
+String? imageURL = await ImageMapURL().imageURL(productData[id]["image"]);
+ImageMapURL.store[productData[id]["image"]] = imageURL!;
+
+rating[id] = await RatingsAndReviews(productID: id).rating;
+reviews[id] = await RatingsAndReviews(productID: id).noOfReviews;
 }
 
 print(ImageMapURL.store);
 
-print("data3: ${data3[0]}");
+//print("data3: ${data3[0]}");
 
 setState(() {
 itemCount;  
@@ -99,7 +109,7 @@ dynamic loadingScreen(){return const Center(child: CircularProgressIndicator(col
 
   ListView listView() {
     return ListView.builder(itemCount: itemCount, itemBuilder: (context, index){return GestureDetector(onTap: (){  
-     Navigator.of(context).push( MaterialPageRoute(builder: (context){return FullProductDetail(appBarBackGroundColor: Colors.white, gradientColor: const [Colors.white, Colors.white], image: ImageMapURL.store[productDetailList[index].image]??"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.ncenet.com%2Fwp-content%2Fuploads%2F2020%2F04%2FNo-image-found.jpg&f=1&nofb=1&ipt=974f896e187b823800b88e7cc781f35a1020b685e44f12f53721f38462dd9bb7&ipo=images", price: productDetailList[index].price, title: productDetailList[index].title, description: productDetailList[index].description, email: productDetailList[index].email, location: productDetailList[index].location, contact: productDetailList[index].contact) ;})  );  
+     Navigator.of(context).push( MaterialPageRoute(builder: (context){return FullProductDetail(productID:productDetailList[index].productID, rating: rating[productDetailList[index].productID], reviews: reviews[productDetailList[index].productID], image: ImageMapURL.store[productDetailList[index].image]??"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.ncenet.com%2Fwp-content%2Fuploads%2F2020%2F04%2FNo-image-found.jpg&f=1&nofb=1&ipt=974f896e187b823800b88e7cc781f35a1020b685e44f12f53721f38462dd9bb7&ipo=images", price: productDetailList[index].price, sellingPrice: productDetailList[index].sellingPrice, title: productDetailList[index].title, description: productDetailList[index].description, email: productDetailList[index].email, location: productDetailList[index].location, contact: productDetailList[index].contact) ;})  );  
   }, child: adminCard(index, productDetailList[index].title,  productDetailList[index].image,
        productDetailList[index].description,  productDetailList[index].price,  productDetailList[index].email,  productDetailList[index].location,  productDetailList[index].contact, ));});
   }

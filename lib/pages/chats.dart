@@ -2,12 +2,16 @@ import 'package:agrilease/login_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.dart';
-import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
-import 'package:scrollable_clean_calendar/utils/enums.dart';
+// import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
+// import 'package:scrollable_clean_calendar/utils/enums.dart';
+// import 'package:scrollable_clean_calendar/utils/extensions.dart';
+
+import 'calender_page.dart';
 
 class ChatsPage extends StatefulWidget {
   const ChatsPage({super.key});
@@ -37,7 +41,7 @@ try {
   Widget build(BuildContext context) {
     return 
     Scaffold(
-      appBar: AppBar(surfaceTintColor: Colors.white, title: Text(AppLocalizations.of(context)!.tagChat, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),), backgroundColor : Colors.blue[50],),
+      appBar: AppBar(surfaceTintColor: Colors.white, title: Text(AppLocalizations.of(context)!.tagChat, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),), backgroundColor : Colors.green[300],),
       body: FutureBuilder(future: someFunction(), builder: (context, snapShot){late dynamic Data; try{ Data =  snapShot.data ; print("Data runtimeType: ${Data.runtimeType} Data = '$Data'");}catch(e){print(e);}
         if(snapShot.hasData){ //snapShot.hasData
           return ChatList(data: Data);
@@ -126,15 +130,32 @@ Widget scheduleBox(doc){
   late Color? color;
   late Radius bottomLeftTeardrop;
   late Radius bottomRightTeardrop;
+  
+  String date  = DateFormat("dd/MM").format(doc['timeStamp'].toDate()).toString();
+  String dateTitle = "";
+  bool isDateChanged = false;
+  if(date !=previousMsgTime){ isDateChanged = true; previousMsgTime=date; dateTitle= date;}
+  print("today: ${DateFormat("dd/MM").format(Timestamp.now().toDate())}, date: ${date}");
+  if(DateFormat("dd/MM").format(Timestamp.now().toDate().subtract(const Duration(days: 1))) == date){dateTitle = "yesterday";}
+  if(DateFormat("dd/MM").format(Timestamp.now().toDate()) == date){dateTitle = "Today";}  
+
+
   if(doc["reciverID"]==widget.reciverEmail){  alignment = Alignment.centerRight; color = Colors.grey[200]; bottomLeftTeardrop = const Radius.circular(20) ; bottomRightTeardrop = const Radius.circular(0); }else{alignment = Alignment.centerLeft; color = Colors.blue[100]; bottomLeftTeardrop = const Radius.circular(0) ; bottomRightTeardrop = const Radius.circular(20);}  
   return //const Text("Schedule Request\n from minDate\n to maxDate");
-  Container( alignment: alignment, padding: const EdgeInsets.all(15),
-    child: Container(padding: const EdgeInsets.all(10), constraints: const BoxConstraints(minWidth: 50),
-    decoration: BoxDecoration( boxShadow: null, color: color, borderRadius: BorderRadius.only(topLeft: const Radius.circular(20), topRight: const Radius.circular(20), bottomLeft: bottomLeftTeardrop,  bottomRight: bottomRightTeardrop)  ), //BorderRadius.all(Radius.circular(18))
-    child: Text( "Schedule Request\n from: ${minDate.toDate().day} ${months[minDate.toDate().month]}\n to:     ${maxDate.toDate().day} ${months[maxDate.toDate().month]}" , textAlign: TextAlign.center,style: const TextStyle(color: Colors.black87, fontSize: 16, ), )),
+  Column(
+    children: [
+      if(isDateChanged)...[Text(dateTitle)],
+
+
+      Container( alignment: alignment, padding: const EdgeInsets.all(15),
+        child: Container(padding: const EdgeInsets.all(10), constraints: const BoxConstraints(minWidth: 50),
+        decoration: BoxDecoration( boxShadow: null, color: color, borderRadius: BorderRadius.only(topLeft: const Radius.circular(20), topRight: const Radius.circular(20), bottomLeft: bottomLeftTeardrop,  bottomRight: bottomRightTeardrop)  ), //BorderRadius.all(Radius.circular(18))
+        child: Text( "Schedule Request\n from: ${minDate.toDate().day} ${months[minDate.toDate().month]}\n to:     ${maxDate.toDate().day} ${months[maxDate.toDate().month]}" , textAlign: TextAlign.center,style: const TextStyle(color: Colors.black87, fontSize: 16, ), )),
+      ),
+    ],
   );  
 }
-
+String previousMsgTime = "0/0";
 
 Widget messageBox(doc){
   doc as Map<String, dynamic>;  
@@ -142,19 +163,41 @@ Widget messageBox(doc){
   late Color? color;
   late Radius bottomLeftTeardrop;
   late Radius bottomRightTeardrop;
-  if(doc["reciverID"]==widget.reciverEmail){  alignment = Alignment.centerRight; color = Colors.grey[200]; bottomLeftTeardrop = const Radius.circular(20) ; bottomRightTeardrop = const Radius.circular(0); }else{alignment = Alignment.centerLeft; color = Colors.blue[100]; bottomLeftTeardrop = const Radius.circular(0) ; bottomRightTeardrop = const Radius.circular(20);}
-  // print("_ChatSectionState widget.reciverEmail: ${widget.reciverEmail}, doc['reciverID']: ${doc["reciverID"]}, alignment: $alignment ");
+  if(doc["reciverID"]==widget.reciverEmail){  alignment = Alignment.centerRight; color = Colors.grey[200]; bottomLeftTeardrop = const Radius.circular(20) ; bottomRightTeardrop = const Radius.circular(0); }else{alignment = Alignment.centerLeft; color = Colors.green[100]; bottomLeftTeardrop = const Radius.circular(0) ; bottomRightTeardrop = const Radius.circular(20);}
+  
+  String date  = DateFormat("dd/MM").format(doc['timeStamp'].toDate()).toString();
+  String dateTitle = "";
+  bool isDateChanged = false;
+  if(date !=previousMsgTime){ isDateChanged = true; previousMsgTime=date; dateTitle= date;}
+  print("today: ${DateFormat("dd/MM").format(Timestamp.now().toDate())}, date: ${date}");
+  if(DateFormat("dd/MM").format(Timestamp.now().toDate().subtract(const Duration(days: 1))) == date){dateTitle = "yesterday";}
+  if(DateFormat("dd/MM").format(Timestamp.now().toDate()) == date){dateTitle = "Today";}
   return 
-  Container( alignment: alignment, padding: const EdgeInsets.all(15), child: messageBubbble(bottomLeftTeardrop, bottomRightTeardrop, color, doc),
+  Column(
+    children: [
+      if(isDateChanged)...[Text(dateTitle)],
+      Container( alignment: alignment, padding: const EdgeInsets.all(15), child: messageBubbble(bottomLeftTeardrop, bottomRightTeardrop, color, doc),
 
+      ),
+    ],
   );  
   
 }
 
-Container messageBubbble(Radius bottomLeftTeardrop,Radius bottomRightTeardrop, Color? color, Map<String, dynamic> doc) => 
-Container(padding: const EdgeInsets.all(10), constraints: const BoxConstraints(minWidth: 50),
+Widget messageBubbble(Radius bottomLeftTeardrop,Radius bottomRightTeardrop, Color? color, Map<String, dynamic> doc) {
+  Timestamp time = doc["timeStamp"];
+  
+  return 
+  Container(padding: const EdgeInsets.all(10), constraints: const BoxConstraints(minWidth: 50),
 decoration: BoxDecoration( boxShadow: null, color: color, borderRadius: BorderRadius.only(topLeft: const Radius.circular(20), topRight: const Radius.circular(20), bottomLeft: bottomLeftTeardrop,  bottomRight: bottomRightTeardrop)  ), //BorderRadius.all(Radius.circular(18))
-child: Text( doc["message"]??"none", textAlign: TextAlign.center,style: const TextStyle(color: Colors.black87, fontSize: 16, ), ));
+child: Column( crossAxisAlignment: CrossAxisAlignment.center,
+  children: [
+        Text( doc["message"]??"none", textAlign: TextAlign.center,style: const TextStyle(color: Colors.black87, fontSize: 16, ), ),
+        Text("${time.toDate().hour}:${time.toDate().minute}", style: const TextStyle(color: Colors.black54, fontSize: 10,), )
+  ],
+));
+}
+
 
 
 void sendMessage(){
@@ -166,7 +209,7 @@ Chats().sendMessage(widget.reciverEmail, _messageController.text, widget.roomID)
   @override
   Widget build(BuildContext context) {
     
-    return Scaffold( appBar: AppBar(title:  Text(widget.reciverEmail), backgroundColor: Colors.blue[50],),
+    return Scaffold( appBar: AppBar(title:  Text(widget.reciverEmail), backgroundColor: Colors.green[300],),
     body: Center(child: Column(children: [
 
           Expanded(child: Container(color: Colors.white, child: _someWidget())),
@@ -174,7 +217,7 @@ Chats().sendMessage(widget.reciverEmail, _messageController.text, widget.roomID)
           TextField( 
             cursorColor: Colors.black, controller: _messageController, 
             decoration: InputDecoration(
-              fillColor: const Color.fromARGB(255, 246, 251, 254), filled: true, 
+              fillColor: Colors.green[50], filled: true, 
               contentPadding: const EdgeInsets.all(20),border: InputBorder.none,   
               hintText: AppLocalizations.of(context)!.tagChatTypeamessage, 
               suffixIcon: 
@@ -198,30 +241,6 @@ Chats().sendMessage(widget.reciverEmail, _messageController.text, widget.roomID)
     ),
 
     );
-  }
-}
-
-//CalendarDatePicker(initialDate: DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 31)), onDateChanged: (value){}),
-
-class CalenderPage extends StatelessWidget {
-  final CleanCalendarController calendarController;
-  final String reciverEmail;
-  final String chatRoomID;
-
-  const CalenderPage({super.key, required this.calendarController, required this.chatRoomID, required this.reciverEmail,});
-
-  @override
-  Widget build(BuildContext context) {
-    
-    return Scaffold(appBar: AppBar(backgroundColor: Colors.white, surfaceTintColor: Colors.transparent,),
-      body: Container( color: Colors.white, 
-        child: ScrollableCleanCalendar(calendarController: calendarController, layout:Layout.BEAUTY, ),
-      ),
-      floatingActionButton: FloatingActionButton(onPressed: ()async{ final DateTime? minDate = calendarController.rangeMinDate;  final DateTime? maxDate = calendarController.rangeMaxDate;
-        if(minDate!=null && maxDate!=null){
-        await Chats().sendScheduleRequest(reciverEmail, chatRoomID, minDate, maxDate).then((value){ print("floting button  ${calendarController.minDate}, ${calendarController.maxDate}"); Navigator.of(context).pop();} );}
-            },backgroundColor: Colors.deepPurple,  child: const Text("Request Date", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold), textAlign: TextAlign.center,),),
-      );
   }
 }
  

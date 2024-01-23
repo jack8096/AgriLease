@@ -79,11 +79,11 @@ late bool isloading;
 Future<void> firebaseIntiation()async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
-  await FetchData.fetchData();
+  await recentAds.fetchData();
   await FirebaseAuth;
   print(Firebase.apps);
   Future.delayed(const Duration(seconds: 1),(){
-  if(Firebase.apps.isNotEmpty & FetchData.list.isNotEmpty ){ isloadingSetState(false);  } //Firebase.apps.isNotEmpty is a list of services initated if empty connect to firebase is failed
+  if(Firebase.apps.isNotEmpty & recentAds.list.isNotEmpty ){ isloadingSetState(false);  } //Firebase.apps.isNotEmpty is a list of services initated if empty connect to firebase is failed
 });
 } 
 
@@ -134,12 +134,22 @@ final List<Widget> pages = [RecentPage( isloadingSetState:isloadingSetState, isl
     currentIndex: _currentIndex,
       items:  [
       BottomNavigationBarItem(icon: const Icon(Ionicons.home_outline), label: AppLocalizations.of(context)!.tagHome),
-      BottomNavigationBarItem(icon: Icon(Ionicons.chatbox_outline), label: AppLocalizations.of(context)!.tagChat),
-      BottomNavigationBarItem(icon: Icon(Ionicons.heart_outline), label: AppLocalizations.of(context)!.tagMyAds),
-      BottomNavigationBarItem(icon: Icon(Ionicons.person_outline), label: AppLocalizations.of(context)!.tagProfile),
+      BottomNavigationBarItem(icon: const Icon(Ionicons.chatbox_outline), label: AppLocalizations.of(context)!.tagChat),
+      BottomNavigationBarItem(icon: const Icon(Ionicons.heart_outline), label: AppLocalizations.of(context)!.tagMyAds),
+      BottomNavigationBarItem(icon: const Icon(Ionicons.person_outline), label: AppLocalizations.of(context)!.tagProfile),
       ]);
   }
 }
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
 // ignore: must_be_immutable
 class RecentPage extends StatefulWidget   { Function isloadingSetState; bool isloading;
   RecentPage({
@@ -154,8 +164,8 @@ class _RecentPageState extends State<RecentPage> {
   @override
   Widget build(BuildContext context) { 
     return Scaffold(
-    appBar: AppBar(actions: [IconButton(onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return const SearchPage();}));}, icon: const Padding(padding: EdgeInsets.only(right: 10), child: Icon(Ionicons.search_outline))  )], surfaceTintColor: Colors.white, backgroundColor: Colors.green[300], title: Text(AppLocalizations.of(context)!.tagHome, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors. black87),),),
-    body: RefreshIndicator(color: Colors.black, onRefresh: ()async{print('refresh indicator'); setState(() { widget.isloading = true;}); await FetchData.fetchData(); setState(() { widget.isloading = false;}); },
+    appBar: AppBar(actions: [IconButton(onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return const SearchPage();}));}, icon: const Padding(padding: EdgeInsets.only(right: 10), child: Icon(Ionicons.search_outline))  )], surfaceTintColor: Colors.white, backgroundColor: Colors.green[300], title: Text(AppLocalizations.of(context)!.tagHome, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors. black54),),),
+    body: RefreshIndicator(color: Colors.black, onRefresh: ()async{print('refresh indicator'); setState(() { widget.isloading = true;}); await recentAds.fetchData(); setState(() { widget.isloading = false;}); },
       child:Column( crossAxisAlignment: CrossAxisAlignment.stretch, 
       children: [Container(color: Colors.white,  padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Text('Recent', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),),),
         widget.isloading?
