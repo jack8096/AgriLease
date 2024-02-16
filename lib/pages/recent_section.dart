@@ -5,8 +5,8 @@ import 'package:agrilease/recent_section_api.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class ProductDetail { final String image; final String title; final Map<String, String> price; final String? sellPrice; final String description; final String email;  final String contact; final String location;
-  ProductDetail({required this.image, required this.title, required this.price, this.sellPrice, required this.description, required this.email, required this.location, required this.contact,});
+class ProductDetail { final String image; final String title; final Map<String, String> price; final String? sellPrice; final String description; final String? category; final String email;  final String contact; final String location;
+  ProductDetail({required this.image, required this.title, required this.price, this.sellPrice, required this.description, this.category, required this.email, required this.location, required this.contact,});
 
 // factory ProductDetail.fromSnapshot(DataSnapshot snapshot){
 //   Map<String,String> data = snapshot.value as Map<String, String>;
@@ -24,7 +24,7 @@ FetchData recentAds = FetchData();
 
 class FetchData{
 late List<SpecialProductDetail> _list;  List<SpecialProductDetail> get list => _list;
-late int _dataListLength;         int get dataListLength => _dataListLength;
+int _dataListLength = 0;         int get dataListLength => _dataListLength;
 final List _imageURLlist = [];   List get imageURLlist => _imageURLlist;
 final Map _imageURLMap = {};     Map get imageURLMap => _imageURLMap;
 final Map _productIdRatingMap = {}; Map get productIdRatingMap => _productIdRatingMap;
@@ -86,15 +86,15 @@ class RecentSection extends StatelessWidget  {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(child:Container(
+    return Container(
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(5),
-        child: GridView.count(crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5, childAspectRatio: 0.7,
+        child: GridView.count(shrinkWrap:true, physics: const NeverScrollableScrollPhysics(), crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5, childAspectRatio: 0.7,
           children: List<Widget>.generate(recentAds.dataListLength, (index) {return Builder(builder: (BuildContext context){return ProductCard(index: index);});})
           ),
       ),
-    ));
+    );
   }
 }
 

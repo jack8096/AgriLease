@@ -1,6 +1,7 @@
 //import 'dart:ffi';
 
 import 'package:agrilease/login_api.dart';
+import 'package:agrilease/main.dart';
 import 'package:agrilease/pages/ad_form.dart';
 import 'package:agrilease/pages/product_card_full_detail_page.dart';
 import 'package:agrilease/pages/recent_section.dart';
@@ -44,11 +45,19 @@ class FireStore {
 
   static delete(id)async{
    try{ 
-    final docRef =  FirebaseFirestore.instance.collection('users_published_ad').doc(emailID);
+    print("delete method");
+    final adRef =  FirebaseFirestore.instance.collection('users_published_ad').doc(emailID);
     final updates = <String, dynamic>{id:FieldValue.delete()};
-    docRef.update(updates);
+    adRef.update(updates);
+
      }catch(e){print(e);}
 
+  }
+
+  static deleteCategory(categorySection, id)async{
+    final docRef = FirebaseFirestore.instance.collection("category").doc(categorySection);
+    final updates = <String, dynamic>{id:FieldValue.delete()};
+    docRef.update(updates);
   }
   
 }
@@ -67,21 +76,21 @@ static Future<List<SpecialProductDetail>>  fetchProductDetal()async{//Future<Lis
     for(String id in productDetailIDList){ 
     DataSnapshot data = await snapShotData.ref(id).get();
     print("data: ${data.value}");
-    final detail = data.value as Map<dynamic, dynamic>;
+    final detail = data.value as Map<dynamic, dynamic>?;
     //print("Future<List<SpecialProductDetail>>");
     //print(detail);
     mapObjectList.add(data.value);
-    var	priceType = detail["price"].runtimeType;
+    var	priceType = detail?["price"].runtimeType;
 	 
 	 var price = "null";
 	 var priceUnit;
-	 if(priceType != String){price = detail["price"]["price"]; priceUnit = detail["price"]["priceUnit"]; print(detail["price"]["price"]); }else{price = detail["price"];}
+	 if(priceType != String){price = detail?["price"]["price"]; priceUnit = detail?["price"]["priceUnit"]; print(detail?["price"]["price"]); }else{price = detail?["price"];}
 	 
-	 print("priceInfo: {title: ${detail['title']}}, image: ${detail["image"]} price $price, priceRunType: $priceType");
+	 //print("priceInfo: {title: ${detail?['title']}}, image: ${detail?["image"]} price $price, priceRunType: $priceType");
 
-    productDetailList.add( SpecialProductDetail(productID: id, image:  detail['image'], title: detail['title'], price: price  , priceUnit: priceUnit,  sellingPrice: detail['sellingPrice'], description: detail['description'], email: detail["email"], location: detail['location'], contact: detail["contact"]) );
+    productDetailList.add( SpecialProductDetail(productID: id, image:  detail?['image'], title: detail?['title'], price: price  , priceUnit: priceUnit,  sellingPrice: detail?['sellingPrice'], description: detail?['description'], email: detail?["email"], location: detail?['location'], contact: detail?["contact"]) );
 
-    print("mapObjectList: $mapObjectList");
+    //print("mapObjectList: $mapObjectList");
     //mapObjectList.add({"productID":id});
     ratingList[id] = await RatingsAndReviews(productID: id).rating;
     noOfReviews[id] = await RatingsAndReviews(productID: id).noOfReviews;
@@ -163,12 +172,33 @@ Future<void> initFunction()async{
     await MyAds.fetchProductDetal().then((value){ productDetailList=value;  setState(() { isLoading=false; });  }); } //isLoading=false;
 
 
-someFunction1(name){  final  url = recentAds.imageURLMap[name]??"None.jpeg";  print("Name: $name , URL: $url"); return url; }
+someFunction1(name){  final  url = recentAds.imageURLMap[name]??"https://firebasestorage.googleapis.com/v0/b/agrilease-ecd0b.appspot.com/o/None.jpeg?alt=media&token=ca13e835-b713-4991-8233-3d1098eec860";
+  print("Name: $name , URL: $url"); return url; }
 
-someFunction3(value, index )async{ print("$value $index"); try{
-  final id = MyAds.productDetailIDList[index]; final firebaseApp = Firebase.app(); FirebaseDatabase.instanceFor(app: firebaseApp, databaseURL: 'https://agrilease-ecd0b-default-rtdb.asia-southeast1.firebasedatabase.app/').ref().child(id).remove(); 
-  FireStore.delete(id); setState((){ productDetailList; });
-}catch(e){print(e);} }
+Future<void> someFunction3(value, index )async{ print("$value $index");
+
+  print("someFunction3 start");
+  final id = MyAds.productDetailIDList[index]; 
+  final firebaseApp = Firebase.app(); 
+  final dbref = FirebaseDatabase.instanceFor(app: firebaseApp, databaseURL: 'https://agrilease-ecd0b-default-rtdb.asia-southeast1.firebasedatabase.app/').ref();
+  final data =   await dbref.child(id).get().then((value) {return value.value as Map<dynamic, dynamic>?;});// required for "data to be removed from category section"
+  await dbref.child(id).remove(); 
+
+
+  
+  
+  String? category;
+  print("id: $id, data?['category']: ${data?['category'] } 'category is String':${data?['category']  is String}");
+  if(data?['category'] is String){  
+  category= data?['category']; print("category: $category");
+  final docRef = FirebaseFirestore.instance.collection("category").doc(category);
+  final update  = <String, dynamic>{id:FieldValue.delete()};
+  await docRef.update(update);
+  print("update: $update");     }  
+
+  FireStore.delete(id); 
+   setState((){ productDetailList; });
+   }
 
 @override
   void initState(){
@@ -195,7 +225,9 @@ Future<dynamic> alertDeleteDialog(BuildContext context, value, index) => showDia
   title: const Text("Are you sure you want to delete?"),
   actions: [
     FilledButton( onPressed: (){ Navigator.of(context).pop(); },    style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))), backgroundColor: MaterialStateProperty.all(Colors.white)), child: const Text("Cancel", style: TextStyle(color: Colors.grey),)),
-    FilledButton( onPressed: ()async{Navigator.of(context).pop(); someFunction3(value, index); initFunction();  },
+    FilledButton( onPressed: ()async{Navigator.of(context).pop(); 
+    await someFunction3(value, index).then((value){ initFunction(); }) ;
+      },
         style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))), backgroundColor: MaterialStateProperty.all(Colors.red[800])), child: const Text("Delete")),
     
   ],
@@ -248,7 +280,7 @@ class NotpublishedAd extends StatelessWidget {
           border: Border.all(color: Colors.black, width: 2), borderRadius: const BorderRadius.all(Radius.circular(6)) ),  child: Center(
           child: Column(children: [
             Expanded(child: Container( decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('assets/publications.webp'), fit: BoxFit.fitHeight)), )),
-            Text(AppLocalizations.of(context)!.tagNoAdsMSG, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), ),
+            Text(AppLocalizations.of(context)!.tagNoAdsMSG, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), ),
             ],),),
         ),
       ),

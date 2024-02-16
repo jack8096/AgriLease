@@ -7,9 +7,9 @@ import 'package:agrilease/login_api.dart';
 import 'package:agrilease/pages/my_adds.dart';
 import 'package:agrilease/pages/recent_section.dart';
 import 'package:agrilease/recent_section_api.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -37,6 +37,7 @@ final productDetailData = {
   'contact':productDetail.contact,
   'image':productDetail.image,
   'email':productDetail.email,
+  'category':productDetail.category,
   };
 
 if(productDetail.sellPrice!=""){productDetailData['sellingPrice'] = productDetail.sellPrice!;}
@@ -108,9 +109,9 @@ class _InputInfoSectonState extends State<InputInfoSecton> {
 TextEditingController title = TextEditingController();
 TextEditingController price = TextEditingController();
 TextEditingController description = TextEditingController();
+TextEditingController category = TextEditingController();
 TextEditingController location = TextEditingController();
 TextEditingController contact = TextEditingController();
-
 TextEditingController sellPrice = TextEditingController();
 
 
@@ -121,16 +122,27 @@ Future<bool> submitForm()async{
 var validate = _formKey.currentState!.validate();
 // print("sellprice: ${sellPrice.text}");
 // return true;
+String? categorySelection;
+if(category.text!=""){ categorySelection = category.text;}
+print("category.text: ${category.text}, categorySelection: $categorySelection:");
 print('form is $validate');
 if( _formKey.currentState!.validate() & UploadData.isImageSelected ){
-   final productDetail =   ProductDetail(email:FireBaseAuthentication.emailID, title: title.text, price: {"price":price.text, "priceUnit":priceUnit[0]}, sellPrice: sellPrice.text, description: description.text, image: UploadData.selectedImage.name, location: location.text, contact: contact.text );
+   final productDetail =   ProductDetail(email:FireBaseAuthentication.emailID, title: title.text, price: {"price":price.text, "priceUnit":priceUnit[0]}, sellPrice: sellPrice.text, description: description.text, category: categorySelection, image: UploadData.selectedImage.name, location: location.text, contact: contact.text );
    await UploadData.uploadImage();
    final productDetailID = await UploadData.write(productDetail);
    final FirebaseDatabase rtdb = await DatabaseInitiation().recentSectionData();
    final DatabaseReference dbRef = rtdb.ref(productDetailID);
    final DataSnapshot snapShot = await dbRef.get();
 
+  if(categorySelection!=null){ 
+    print("FirebaseFirestore run");
+    final collectionRef = FirebaseFirestore.instance.collection("category");
+    collectionRef.doc(categorySelection).set( {productDetailID:null}, SetOptions(merge: true) );
+
+   }
+
    if(snapShot.value ==null){print(false); return false;}else{print(true); return true;}
+
 
 }
 return false;
@@ -158,12 +170,14 @@ child: Padding(padding: const EdgeInsets.all(20),
   
         labelText(AppLocalizations.of(context)!.tagTitle),       TextFormField( decoration: inputDecoration(titleValidate? Colors.green:Colors.white),  controller: title,       validator: (value) { if(value!=''   ){ setState(() {titleValidate=true;});              return null; }else{ setState(() {titleValidate=false;}); return AppLocalizations.of(context)!.tagTitleErrorMSG; }  }, ), //value.runtimeType==String);
   
-        labelText("${AppLocalizations.of(context)!.tagPrice} \u{20B9}"),       TextFormField( onTap: ()async{print("onTap on price"); await showDialog(context: context, builder: (context){return PriceRadioTile(selectedRadioTile: priceUnit);} ).then((value) => setState((){priceUnit;}));  },  inputFormatters: [FilteringTextInputFormatter.digitsOnly], decoration: InputDecoration(suffixText: "per ${priceUnit[0]}", suffixIcon: const Icon(Ionicons.checkmark_circle_outline), suffixIconColor: priceValidate? Colors.green:Colors.white, contentPadding: const EdgeInsets.all(8), border: const OutlineInputBorder(), focusedBorder: const OutlineInputBorder(borderSide: BorderSide(width: 2, color: Colors.black))  ),  controller: price,       validator: (value) { try {int.parse(value??"None"); setState((){priceValidate = true;});return null; } catch (e) { setState((){priceValidate = false;}); } return AppLocalizations.of(context)!.tagPriceErrorMSG; }, ),
+        labelText("${AppLocalizations.of(context)!.tagPrice} \u{20B9}"),       TextFormField( onTap: ()async{print("onTap on price"); await showDialog(barrierDismissible: false, context: context, builder: (context){return PriceRadioTile(selectedRadioTile: priceUnit);} ).then((value) => setState((){priceUnit;}));  },  inputFormatters: [FilteringTextInputFormatter.digitsOnly], decoration: InputDecoration(suffixText: "per ${priceUnit[0]}", suffixIcon: const Icon(Ionicons.checkmark_circle_outline), suffixIconColor: priceValidate? Colors.green:Colors.white, contentPadding: const EdgeInsets.all(8), border: const OutlineInputBorder(), focusedBorder: const OutlineInputBorder(borderSide: BorderSide(width: 2, color: Colors.black))  ),  controller: price,       validator: (value) { try {int.parse(value??"None"); setState((){priceValidate = true;});return null; } catch (e) { setState((){priceValidate = false;}); } return AppLocalizations.of(context)!.tagPriceErrorMSG; }, ),
 
         labelText("Selling Price"), TextFormField( inputFormatters: [FilteringTextInputFormatter.digitsOnly], controller: sellPrice, decoration: const InputDecoration( suffixIcon: Icon(Ionicons.checkmark_circle_outline), suffixIconColor: Colors.green, contentPadding: EdgeInsets.all(8), border: OutlineInputBorder(),  hintText: "(Optional)", focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 2, color: Colors.black))  )  ),
   
         labelText(AppLocalizations.of(context)!.tagDescription), TextFormField( decoration: inputDecoration(desValidate?   Colors.green:Colors.white),  controller: description, validator: (value) { if(value!='' ){ setState(() {desValidate=true;});                  return null; }else{ setState(() {desValidate=false;}); } return AppLocalizations.of(context)!.tagDescriptionErrorMSG;}, ), //value.runtimeType==String);
   
+        labelText("Category"),     TextFormField(onTap: (){print("onTap Category TextFormField"); showDialog(context: context, builder: (context){return categorySelection();});  }, readOnly: true,   controller: category,     validator: (value) { if(value!=null           ){ setState(() {null;});       return null; }else{ setState(() {null;}); } return null; }, decoration: InputDecoration( suffixIcon: const Icon(Ionicons.checkmark_circle_outline), suffixIconColor: category.text.isEmpty?Colors.amber:Colors.green , contentPadding: const EdgeInsets.all(8), border: const OutlineInputBorder(),  hintText: "(Optional)", focusedBorder: const OutlineInputBorder(borderSide: BorderSide(width: 2, color: Colors.black))  ), ), 
+
         labelText(AppLocalizations.of(context)!.tagLocation),     TextFormField( decoration: inputdecoration(locValidate?   Colors.green:Colors.white),  controller: location,    validator: (value) { if(value!=''            ){ setState(() {locValidate=true;});       return null; }else{ setState(() {locValidate=false;}); } return AppLocalizations.of(context)!.tagLocationErrorMSG; }, ), //value.runtimeType==String);
   
         labelText(AppLocalizations.of(context)!.tagContact),     TextFormField( inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10), ], decoration: inputDecoration(contValidate?  Colors.green:Colors.white),  controller: contact,     validator: (value) {  try { if(value!.length==10){ setState((){contValidate = true;});  return null;} } catch (e) { setState((){contValidate = false;}); } return AppLocalizations.of(context)!.tagContactErrorMSG; }, ), //value.runtimeType==String);
@@ -191,6 +205,7 @@ child: Padding(padding: const EdgeInsets.all(20),
       
       onPressed: ()async{
         if(_formKey.currentState!.validate()){
+          print("form validate");
         showDialog(context: context, builder: (context)=>publishIndecator(), barrierDismissible: false, );
         //await UploadData.uploadImage();
         await submitForm().then((value) {print("indicator value: $value");
@@ -207,6 +222,15 @@ child: Padding(padding: const EdgeInsets.all(20),
        }, child: Text(AppLocalizations.of(context)!.tagPublish, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),), );
   }
 
+
+
+Dialog categorySelection(){
+  List<String> categoryList = ['None', 'Battery sprayer', 'Boom sprayer', 'Brushcutter', 'Cultivator', 'Engine sprayer', 'Harrow', 'HTP sprayer', 'Intercultivator', 'MB plough', 'Mini rotator', 'Power tiller', 'Reaper', 'Reversible plough', 'Ridger', 'Rotator', 'Super seeder', 'Thresher', 'Water pump'];
+  return Dialog(surfaceTintColor: Colors.white, child: AspectRatio(aspectRatio: 1, child: Padding(padding: const EdgeInsets.all(5), child: Scrollbar( thumbVisibility:true, trackVisibility:false, radius: const Radius.circular(20), interactive:false, 
+
+  child: ListView(children: List.generate(categoryList.length, (index) => 
+  AspectRatio(aspectRatio: 5, child: GestureDetector(onTap: (){print("onTap on ${categoryList[index]}"); category.text=categoryList[index]; Navigator.pop(context);  }, child: Card(surfaceTintColor: Colors.green, child: Center(child: Text(categoryList[index])))))),)),),),);
+}
 
 
 String? selectedRadioTile;
@@ -251,7 +275,7 @@ class _PriceRadioTileState extends State<PriceRadioTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(surfaceTintColor: Colors.white, child: AspectRatio(aspectRatio: 1.5, child: Card(
+    return Dialog( surfaceTintColor: Colors.white, child: AspectRatio(aspectRatio: 1.5, child: Card(
   child: Center(child: Column( children: [
     const Padding(padding: EdgeInsets.all(8), child: Text("Rent per"),),
     RadioListTile(title: const Text("Hours"), value: "Hour" , groupValue: widget.selectedRadioTile[0], onChanged: (value){ widget.selectedRadioTile[0]=value ?? "null"; print("selectedRadioTile: ${widget.selectedRadioTile[0]}, value: $value"); setStateFunction(value); } ),

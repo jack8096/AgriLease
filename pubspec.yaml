@@ -84,6 +84,8 @@ flutter:
     - assets/LoginLogo.png
     - assets/loginScreen01.jpg
     - assets/android_neutral_sq_SI@4x.png
+    - assets/categoryImage/
+    - assets/categorySearchPagePNG.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
