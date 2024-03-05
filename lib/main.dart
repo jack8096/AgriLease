@@ -6,6 +6,7 @@ import 'package:agrilease/pages/chats.dart';
 import 'package:agrilease/pages/my_adds.dart';
 import 'package:agrilease/pages/product_card_full_detail_page.dart';
 import 'package:agrilease/pages/profile.dart';
+import 'package:agrilease/pages/profile_page.dart';
 import 'package:agrilease/pages/recent_section.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -120,7 +121,7 @@ void _navigationBarIndex(int index){  setState(() { _currentIndex = index; });}
   @override
   Widget build(BuildContext context) {
 // ignore: prefer_const_constructors
-final List<Widget> pages = [HomePage(), const ChatsPage(), const MyAdsPage(), const Profile() ]; 
+final List<Widget> pages = [HomePage(), const ChatsPage(), const MyAdsPage(), const ProfilePage() ]; 
     return Scaffold(
 
       body: pages[_currentIndex],

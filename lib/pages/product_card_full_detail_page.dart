@@ -2,6 +2,7 @@ import 'package:agrilease/login_api.dart';
 import 'package:agrilease/pages/chats.dart';
 import 'package:agrilease/pages/review_and_rating.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,6 +15,10 @@ class FullProductDetail extends StatelessWidget {final double? rating; final int
   const FullProductDetail({super.key,  this.rating, this.reviews, this.productID,  required  this.image, required this.price, this.sellingPrice, required this.title, required this.description, required this.email, required this.location, required this.contact, }); //required this.appBarBackGroundColor, required this.gradientColor,
 final  backgroundcolor = const Color.fromARGB(255, 255, 249, 255,);
 
+// addFavourites(){
+//   if(productID == null){return null;}
+//   Favourites.add(productID);
+// }
 
   @override
   Widget build(BuildContext context) {print("FullProductDetail:- sellingPrice: $sellingPrice");
@@ -23,7 +28,7 @@ final  backgroundcolor = const Color.fromARGB(255, 255, 249, 255,);
       body: Container(  color: Colors.white,
         child: ListView(padding: const EdgeInsets.only(left: 10, right: 10, top: 5,),
           children: [
-            Card(clipBehavior: Clip.hardEdge, child: Image.network(image, fit: BoxFit.fitWidth,)),
+            ImageCard(image: image, productID: productID),
             TitleCard(rating: rating??0, reviews:reviews??0, productID: productID, title: title, price: price, sellPrice: sellingPrice, location: location, email: email,),//title price 
             DescriptionCard(description: description),// description
             AddressCard(address: location,),
@@ -73,6 +78,73 @@ final  backgroundcolor = const Color.fromARGB(255, 255, 249, 255,);
   }
 
 
+}
+
+
+class Favourites{
+  static FirebaseFirestore fireStore = FirebaseFirestore.instance;
+
+static Future<bool> exist(productID)async{ 
+  final docRef = fireStore.collection('userData').doc(FireBaseAuthentication.emailID).collection("favorateCollection").doc("favorate");
+  final data =  await docRef.get(); 
+  final data0 = data.data()?.keys.toList();
+  
+  bool result = data0?.contains(productID)??false;
+  return result;
+}
+
+static Future<List?> getList()async{ 
+  final docRef = fireStore.collection("userData").doc(FireBaseAuthentication.emailID).collection("favorateCollection").doc("favorate");
+  final snapShot = await docRef.get();
+  final favorates = snapShot.data()?.keys.toList();
+  print(favorates);
+  return favorates ;
+}
+
+static Future<void> add(String? productID)async{ if(productID== null){return null;}
+final docRef = fireStore.collection("userData").doc(FireBaseAuthentication.emailID).collection("favorateCollection");
+await docRef.doc("favorate").set({productID:null}, SetOptions(merge: true));
+}
+
+static Future<void> delete(productID)async{
+  final docRef = fireStore.collection("userData").doc(FireBaseAuthentication.emailID).collection("favorateCollection").doc("favorate");
+  await docRef.set({productID:FieldValue.delete()}, SetOptions(merge: true));
+}
+}
+
+class ImageCard extends StatefulWidget {
+  const ImageCard({
+    super.key,
+    required this.image,
+    required this.productID
+  });
+
+  final String image;
+  final String? productID;
+
+  @override
+  State<ImageCard> createState() => _ImageCardState();
+}
+
+class _ImageCardState extends State<ImageCard> {
+  bool isFavorate = false;
+  void favoriteToggle()async{
+    if(isFavorate){await Favourites.delete(widget.productID).then((value){  isFavorate = !isFavorate; setState((){isFavorate;});  });}
+    else{await Favourites.add(widget.productID).then((value){ isFavorate = !isFavorate; setState((){isFavorate;}); });}
+  
+  }
+
+  initFunction()async{isFavorate = await Favourites.exist(widget.productID);
+  setState((){  isFavorate;  });
+  }
+
+  @override
+  void initState() {  initFunction(); super.initState();  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(clipBehavior: Clip.hardEdge, child: GestureDetector(onTap: (){favoriteToggle();}, child: Badge( label: Icon(isFavorate?Ionicons.heart:Ionicons.heart_outline, color:isFavorate?Colors.red:Colors.black , size: 30,), alignment: Alignment.topRight, largeSize: 50, backgroundColor: Colors.transparent,  child: Image.network(widget.image, fit: BoxFit.fitWidth,))));
+  }
 }
 class ContactCard extends StatelessWidget {
   const ContactCard({

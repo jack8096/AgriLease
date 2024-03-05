@@ -150,7 +150,14 @@ Widget scheduleBox(doc){
       Container( alignment: alignment, padding: const EdgeInsets.all(15),
         child: Container(padding: const EdgeInsets.all(10), constraints: const BoxConstraints(minWidth: 50),
         decoration: BoxDecoration( boxShadow: null, color: color, borderRadius: BorderRadius.only(topLeft: const Radius.circular(20), topRight: const Radius.circular(20), bottomLeft: bottomLeftTeardrop,  bottomRight: bottomRightTeardrop)  ), //BorderRadius.all(Radius.circular(18))
-        child: Text( "Schedule Request\n from: ${minDate.toDate().day} ${months[minDate.toDate().month]}\n to:     ${maxDate.toDate().day} ${months[maxDate.toDate().month]}" , textAlign: TextAlign.center,style: const TextStyle(color: Colors.black87, fontSize: 16, ), )),
+        child: Column(
+          children: [
+            Text( "Schedule Request\n from: ${minDate.toDate().day} ${months[minDate.toDate().month]}\n to:     ${maxDate.toDate().day} ${months[maxDate.toDate().month]}" , textAlign: TextAlign.center,style: const TextStyle(color: Colors.black87, fontSize: 16, ), ),
+            Row(children: [
+              FilledButton(onPressed: (){}, style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.green), surfaceTintColor: MaterialStatePropertyAll(Colors.transparent), shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.zero))),),   child: const Text("Accept"))
+            ],)
+          ],
+        )),
       ),
     ],
   );  
@@ -224,14 +231,14 @@ Chats().sendMessage(widget.reciverEmail, _messageController.text, widget.roomID)
               SizedBox( width: 100,
                 child: Row(  mainAxisAlignment: MainAxisAlignment.spaceEvenly, crossAxisAlignment: CrossAxisAlignment.center, children: [
                     InkWell(onTap:(){sendMessage(); _messageController.clear();},child: const Icon(Ionicons.paper_plane_outline), ),
-                    InkWell(onTap: ()async{ await Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                      return CalenderPage(calendarController: ChatSection.calendarController, chatRoomID: widget.roomID, reciverEmail: widget.reciverEmail,);
+                    // InkWell(onTap: ()async{ await Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                    //   return CalenderPage(calendarController: ChatSection.calendarController, chatRoomID: widget.roomID, reciverEmail: widget.reciverEmail,);
                       
-                      })).then((value){                       
-                       print( "Calender minDate: ${ChatSection.calendarController.rangeMinDate!.day}, maxDate: ${ChatSection.calendarController.rangeMaxDate!.day}" );
+                    //   })).then((value){                       
+                    //    print( "Calender minDate: ${ChatSection.calendarController.rangeMinDate!.day}, maxDate: ${ChatSection.calendarController.rangeMaxDate!.day}" );
                        
-                       });},
-                      child: const Icon(Icons.schedule),)
+                    //    });},
+                    //   child: const Icon(Icons.schedule),)
                   ],),
               )
                ),

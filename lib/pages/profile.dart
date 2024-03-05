@@ -191,7 +191,7 @@ class ProfileCard extends StatelessWidget {final String? profilePhotoUrl;
 }
 
 class ProfilePhoto extends StatelessWidget {final String? profilePhotoUrl;
-  ProfilePhoto({ required this.profilePhotoUrl,
+  const ProfilePhoto({ required this.profilePhotoUrl,
     super.key,
   });
 
