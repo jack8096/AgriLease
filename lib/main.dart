@@ -139,7 +139,7 @@ final List<Widget> pages = [HomePage(), const ChatsPage(), const MyAdsPage(), co
       BottomNavigationBarItem(icon: const Icon(Ionicons.home_outline   ), label: AppLocalizations.of(context)!.tagHome),
       BottomNavigationBarItem(icon: const Icon(Ionicons.chatbox_outline), label: AppLocalizations.of(context)!.tagChat),
       BottomNavigationBarItem(icon: const Icon(Ionicons.heart_outline  ), label: AppLocalizations.of(context)!.tagMyAds),
-      BottomNavigationBarItem(icon: const Icon(Ionicons.person_outline ), label: AppLocalizations.of(context)!.tagProfile),
+      BottomNavigationBarItem(icon: const Icon(Ionicons.person_outline ), label: AppLocalizations.of(context)!.tagAccount),
       ]);
   }
 }

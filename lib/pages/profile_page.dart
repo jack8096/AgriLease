@@ -60,7 +60,7 @@ double thicknessDivider = 1;
             const AspectRatio(aspectRatio: 5, child: SizedBox(),),
             ListView(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), children:  [
               //dividerCommonCardProfile(),
-              CommonCardProfile(icon: "assets/profilePageIcons/farmer.png", title: "Account", onTap: (){  Navigator.of(context).push( MaterialPageRoute(builder: (context){return const Profile();}) );  }),
+              CommonCardProfile(icon: "assets/profilePageIcons/farmer.png", title: "Profile", onTap: (){  Navigator.of(context).push( MaterialPageRoute(builder: (context){return const Profile();}) );  }),
           
               //dividerCommonCardProfile(),
               CommonCardProfile(icon: "assets/profilePageIcons/heart.png", title: "Favorites", onTap: (){        Navigator.of(context).push(MaterialPageRoute(builder: (context){return const FavoratesPage();} )  ); } ),
