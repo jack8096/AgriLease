@@ -1,8 +1,6 @@
 import 'package:agrilease/login_api.dart';
 import 'package:agrilease/pages/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ionicons/ionicons.dart';
@@ -16,25 +14,31 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
       
 
-    return     WillPopScope(
+    return     WillPopScope(  
       onWillPop: () {return Future.delayed(Duration.zero, (){  if(FireBaseAuthentication.isSignedIn){return true;}else{return false;} });},
       child: Scaffold(
         body: Container( padding: const EdgeInsets.all(20), decoration: const BoxDecoration( image: DecorationImage( fit: BoxFit.cover,  image: AssetImage("assets/loginScreen01.jpg")) ), 
-          child: ListView(children: [AspectRatio(aspectRatio: 1, child: Container(  decoration: const BoxDecoration(image: DecorationImage( image: AssetImage("assets/LoginLogo.png"))),)),
+          child: ListView(  children: [AspectRatio(aspectRatio: 1, child: Container(  decoration: const BoxDecoration(image: DecorationImage( image: AssetImage("assets/LoginLogo.png"))),)),
                   
           //const AspectRatio(aspectRatio: 2, child: Text(style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1 ), "Unlock Possibilities, Share Tools: \nWelcome to Agrilease - Where Equipment Finds Its Next Adventure")).animate(effects: [const ShimmerEffect(duration: Duration(seconds: 2))]),
 
           const Text( style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26, letterSpacing: 1.3 ), textAlign: TextAlign.center, maxLines: 1, "Agrilease", ),
           
+          
 
-          FilledButton(onPressed: ()async{ await Navigator.of(context).push(MaterialPageRoute(builder: (context){return const PhoneLogin();})   ).then((value){ if(FirebaseAuth.instance.currentUser != null){return Navigator.of(context).pop(); }}    );
-   }, 
+          Padding( padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                FilledButton(  onPressed: ()async{await FireBaseAuthentication().signInWithGooggle().then( (value){if(FireBaseAuthentication.isSignedIn){Navigator.of(context).pop(); ProfileInfo.setProfileInfo();} ProfileInfo.setProfileInfo();  }  );  },  style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),   backgroundColor: MaterialStateProperty.all(Colors.transparent,) ),child: const Image(height: 40, image: AssetImage("assets/android_neutral_sq_SI@4x.png")) ), //const Text("Sign in with Google"),
+                SizedBox( width: 175,child: FilledButton.icon( icon: const Padding(padding: EdgeInsets.only(left: 8), child: Icon(Icons.phone_android,   color: Colors.black)), label: const Text( "Sign in with Phone number", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500,   letterSpacing: -0.2, fontSize: 16),), style: ButtonStyle(backgroundColor:MaterialStateProperty.all(const Color.fromARGB(255, 242, 242, 242)),  textStyle: MaterialStateProperty.all( const TextStyle(color: Colors.black)), padding: MaterialStateProperty.all(const EdgeInsets.only(right: 10)), shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),   ), onPressed: ()async{ await Navigator.of(context).push(MaterialPageRoute(builder: (context){return const PhoneLogin();})   ).then((value){ if(FirebaseAuth.instance.currentUser != null){return Navigator.of(context).pop(); }}    );
+                 }),),
+          
               
-              
-              
-              child: const Text("phone sign in")),
+              ]
+            ),
+          ),
 
-          AspectRatio(aspectRatio: 3, child: Center(child: FilledButton(  onPressed: ()async{await FireBaseAuthentication().signInWithGooggle().then( (value){if(FireBaseAuthentication.isSignedIn){Navigator.of(context).pop(); ProfileInfo.setProfileInfo();} ProfileInfo.setProfileInfo();  }  );  },  style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),   backgroundColor: MaterialStateProperty.all(Colors.transparent,) ),child: const Image(height: 40, image: AssetImage("assets/android_neutral_sq_SI@4x.png")) ) )), //const Text("Sign in with Google"),
+          
             ],
           ),
         ),
@@ -79,9 +83,9 @@ class _PhoneLoginState extends State<PhoneLogin> {
               codeSent: (String verificationId, int? resendToken)async{ 
                 print("smsOTP.text: ${smsOTP.text}");
                 Navigator.of(context).push(MaterialPageRoute(builder: (context){return  EnterOTPScreen(verificationId: verificationId); }));
-                
-              // PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsOTP.text);
-              // await auth.signInWithCredential(credential).then((value){  Navigator.of(context).pop(); Navigator.of(context).pop();  });
+                  
+                // PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsOTP.text);
+                // await auth.signInWithCredential(credential).then((value){  Navigator.of(context).pop(); Navigator.of(context).pop();  });
                }, 
               codeAutoRetrievalTimeout: (codeAutoRetrievalTimeout){});  
         

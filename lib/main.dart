@@ -5,7 +5,6 @@ import 'package:agrilease/l10n/l10.dart';
 import 'package:agrilease/pages/chats.dart';
 import 'package:agrilease/pages/my_adds.dart';
 import 'package:agrilease/pages/product_card_full_detail_page.dart';
-import 'package:agrilease/pages/profile.dart';
 import 'package:agrilease/pages/profile_page.dart';
 import 'package:agrilease/pages/recent_section.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -137,10 +136,10 @@ final List<Widget> pages = [HomePage(), const ChatsPage(), const MyAdsPage(), co
     onTap: (value) => {_navigationBarIndex(value), },
     currentIndex: _currentIndex,
       items:  [
-      BottomNavigationBarItem(icon: const Icon(Ionicons.home_outline), label: AppLocalizations.of(context)!.tagHome),
+      BottomNavigationBarItem(icon: const Icon(Ionicons.home_outline   ), label: AppLocalizations.of(context)!.tagHome),
       BottomNavigationBarItem(icon: const Icon(Ionicons.chatbox_outline), label: AppLocalizations.of(context)!.tagChat),
-      BottomNavigationBarItem(icon: const Icon(Ionicons.heart_outline), label: AppLocalizations.of(context)!.tagMyAds),
-      BottomNavigationBarItem(icon: const Icon(Ionicons.person_outline), label: AppLocalizations.of(context)!.tagProfile),
+      BottomNavigationBarItem(icon: const Icon(Ionicons.heart_outline  ), label: AppLocalizations.of(context)!.tagMyAds),
+      BottomNavigationBarItem(icon: const Icon(Ionicons.person_outline ), label: AppLocalizations.of(context)!.tagProfile),
       ]);
   }
 }
@@ -157,28 +156,33 @@ class CategorySection extends StatefulWidget { final bool showAll;
 
 class _CategorySection extends State<CategorySection> {
   
-List<String> category = ['Battery sprayer', 'Boom sprayer', 'Brushcutter', 'Cultivator', 'Engine sprayer', 'Harrow', 'HTP sprayer', 'Intercultivator', 'MB plough', 'Mini rotator', 'Power tiller', 'Reaper', 'Reversible plough', 'Ridger', 'Rotator', 'Super seeder', 'Thresher', 'Water pump'];
+
 
   @override
   Widget build(BuildContext context) {
+    // List category = [AppLocalizations.of(context)!.tagBatterySprayer, 'Boom sprayer', 'Brushcutter', 'Cultivator', 'Engine sprayer', 'Harrow', 'HTP sprayer', 'Intercultivator', 'MB plough', 'Mini rotator', 'Power tiller', 'Reaper', 'Reversible plough', 'Ridger', 'Rotator', 'Super seeder', 'Thresher', 'Water pump'];
+    Map category = {'Battery sprayer':AppLocalizations.of(context)!.tagBatterySprayer, 'Boom sprayer':AppLocalizations.of(context)!.tagBatterySprayer, 'Brushcutter':AppLocalizations.of(context)!.tagBrushcutter, 'Cultivator':AppLocalizations.of(context)!.tagCultivator, 'Engine sprayer':AppLocalizations.of(context)!.tagEngineSprayer, 'Harrow':AppLocalizations.of(context)!.tagHarrow, 'HTP sprayer':AppLocalizations.of(context)!.tagHTPsprayer, 'Intercultivator':AppLocalizations.of(context)!.tagIntercultivator, 'MB plough':AppLocalizations.of(context)!.tagMBplough, 'Mini rotator':AppLocalizations.of(context)!.tagMiniRotator, 'Power tiller':AppLocalizations.of(context)!.tagPowerTiller, 'Reaper':AppLocalizations.of(context)!.tagReaper, 'Reversible plough':AppLocalizations.of(context)!.tagReversiblePlough, 'Ridger':AppLocalizations.of(context)!.tagRidger, 'Rotator':AppLocalizations.of(context)!.tagRotator, 'Super seeder':AppLocalizations.of(context)!.tagSuperSeeder, 'Thresher':AppLocalizations.of(context)!.tagThresher, 'Water pump':AppLocalizations.of(context)!.tagWaterPump};
+    List categoryKeys = category.keys.toList();
     return Container(padding: const EdgeInsets.all(6), color: Colors.white,
-    child: GridView.count( shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), crossAxisCount: 4, crossAxisSpacing:5, mainAxisSpacing: 5,  children: List.generate(widget.showAll?category.length: 4, (index) => CategoryTile(title: category[index])) ));
+    // child: GridView.count( shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), crossAxisCount: 4, crossAxisSpacing:5, mainAxisSpacing: 5,  children: List.generate(widget.showAll?category.length: 4, (index) => CategoryTile(title: category[index])) ));
+    child: GridView.count( shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), crossAxisCount: 4, crossAxisSpacing:5, mainAxisSpacing: 5,  children: List.generate(widget.showAll?categoryKeys.length: 4, (index) => CategoryTile(title: categoryKeys[index], category: category,)) ));
   }
 }
 
-class CategoryTile extends StatelessWidget {final String title;
-  const CategoryTile({super.key, required this.title});
+class CategoryTile extends StatelessWidget {final String title; final Map category;
+  const CategoryTile({super.key, required this.title, required this.category});
   
   @override
   Widget build(BuildContext context) {
-    return GestureDetector( onTap: (){print("onTap on $title"); Navigator.push(context, MaterialPageRoute(builder: (context){return CategorySearchPage(title: title,);}));},
+    return GestureDetector( onTap: (){      //print("onTap on $title"); 
+    Navigator.push(context, MaterialPageRoute(builder: (context){return CategorySearchPage(title: title,);}));},
       child: Card( surfaceTintColor: Colors.transparent, color: Colors.white, child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, 
         children: [
-          AspectRatio(aspectRatio: 6, child: Text(title, style: const TextStyle(color: Colors.transparent),)),
-          AspectRatio(aspectRatio: 1.6, child: Image.asset("assets/categoryImage/$title.jpg")),
+          //Expanded(flex: 1, child: AspectRatio(aspectRatio: 6, child: Text(title, style: const TextStyle(color: Colors.transparent),))),
+          Expanded(flex: 3, child: AspectRatio(aspectRatio: 1.6, child: Image.asset("assets/categoryImage/${title}.jpg"))),
           //AspectRatio(aspectRatio: 1.6, child: Row(children: [const Spacer(),  const Spacer(), ],)),
           
-          AspectRatio(aspectRatio: 6, child: Text(title, textAlign: TextAlign.center,)),
+          Expanded(flex: 1, child: AspectRatio(aspectRatio: 6, child: Text(category[title], textAlign: TextAlign.center,))),
         ],
       ),),
     );
@@ -325,14 +329,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) { 
     return Scaffold(
-    appBar: AppBar(actions: [IconButton(onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return const SearchPage();}));}, icon: const Padding(padding: EdgeInsets.only(right: 10), child: Icon(Ionicons.search_outline))  )], surfaceTintColor: Colors.white, backgroundColor: Colors.green[300], title: Text(AppLocalizations.of(context)!.tagHome, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors. black54),),),
+    appBar: AppBar(actions: [IconButton(onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return const SearchPage();}));}, icon: const Padding(padding: EdgeInsets.only(right: 10), child: Icon(Ionicons.search_outline))  )], surfaceTintColor: Colors.white, backgroundColor: Colors.green[300], title: Text(AppLocalizations.of(context)!.tagHome, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors. black),),),
     body: RefreshIndicator(color: Colors.black, onRefresh: ()async{print('refresh indicator'); setState(() { _MyHomePageState.setLoading = true;}); await recentAds.fetchData(); setState(() { _MyHomePageState.setLoading = false;}); },
       child:ListView( //crossAxisAlignment: CrossAxisAlignment.stretch, 
       children: [
-        Container(color: Colors.white,  padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Row(children: [ Text('Category', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),), const Spacer(), TextButton(onPressed: (){print("button pressed"); setState((){showAll  = true;});}, style: const ButtonStyle(surfaceTintColor:MaterialStatePropertyAll(Colors.amber),  textStyle: MaterialStatePropertyAll(TextStyle(fontSize: 16)), foregroundColor: MaterialStatePropertyAll(Colors.black)), child: const Text("All")) ],)),
+        Container(color: Colors.white,  padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Row(children: [ Text(AppLocalizations.of(context)!.tagCategory, style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),), const Spacer(), TextButton(onPressed: (){print("button pressed"); setState((){showAll  = true;});}, style: const ButtonStyle(surfaceTintColor:MaterialStatePropertyAll(Colors.amber),  textStyle: MaterialStatePropertyAll(TextStyle(fontSize: 16)), foregroundColor: MaterialStatePropertyAll(Colors.black)), child: Text(AppLocalizations.of(context)!.tagAll)) ],)),
         CategorySection(showAll: showAll),
         
-        Container(color: Colors.white,  padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Text('Recent', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),),),
+        Container(color: Colors.white,  padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),  child: Text(AppLocalizations.of(context)!.tagRecent, style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500),),),
         //const CategorySection(),
         _MyHomePageState.isloading?
         ListView(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), children: const [LoadingshimmeringEffect()])

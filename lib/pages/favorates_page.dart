@@ -1,5 +1,4 @@
 import 'package:agrilease/pages/product_card_full_detail_page.dart';
-import 'package:agrilease/pages/recent_section.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';

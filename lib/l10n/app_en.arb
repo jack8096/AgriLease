@@ -1,7 +1,9 @@
 {
     "language":"English",
 
-
+    "tagCategory":"Category",
+    "tagRecent":"Recent",
+    "tagAll":"All",
 
     "tagProfile":"Profile",
     "tagContact":"Contact",
@@ -45,6 +47,24 @@
     "tagHome":"Home",
     "tagCall":"Call",
 
-    "tagSearch":"Search"
+    "tagSearch":"Search",
     
+    "tagBatterySprayer":"Battery Sprayer",
+    "tagBoomSprayer":"Boom sprayer",
+    "tagBrushcutter":"Brushcutter",
+    "tagCultivator":"Cultivator",
+    "tagEngineSprayer":"Engine sprayer",
+    "tagHarrow":"Harrow",
+    "tagHTPsprayer":"HTP sprayer",
+    "tagIntercultivator":"Intercultivator", 
+    "tagMBplough":"MB plough", 
+    "tagMiniRotator":"Mini rotator", 
+    "tagPowerTiller":"Power tiller", 
+    "tagReaper":"Reaper", 
+    "tagReversiblePlough":"Reversible plough", 
+    "tagRidger":"Ridger", 
+    "tagRotator":"Rotator", 
+    "tagSuperSeeder":"Super seeder", 
+    "tagThresher":"Thresher", 
+    "tagWaterPump":"Water pump"
 }

@@ -21,7 +21,7 @@ final  backgroundcolor = const Color.fromARGB(255, 255, 249, 255,);
 // }
 
   @override
-  Widget build(BuildContext context) {print("FullProductDetail:- sellingPrice: $sellingPrice");
+  Widget build(BuildContext context) {//print("FullProductDetail:- sellingPrice: $sellingPrice");
     //print("rating: $rating, reviews:$reviews, productID: $productID,");
     return Scaffold( 
       appBar: AppBar( backgroundColor: Colors.green[300], surfaceTintColor: Colors.transparent,),
@@ -63,10 +63,11 @@ final  backgroundcolor = const Color.fromARGB(255, 255, 249, 255,);
       ) ,),
     )),
     floatingActionButton: FloatingActionButton(onPressed: ()async{
-
+        if(productID == null){return ;}
         await Chats().createChatRoom(FireBaseAuthentication.emailID, email).then((value){  
         Navigator.of(context).push(MaterialPageRoute(builder: (context){
-          return CalenderPage(calendarController: ChatSection.calendarController, chatRoomID: value, reciverEmail: email);
+          
+          return CalenderPage(calendarController: ChatSection.calendarController, productID: productID??"", name: title, image: image, price: price, chatRoomID: value, reciverEmail: email);
           //ChatSection(roomID: value, reciverEmail: email);
           }  ));
         
@@ -211,7 +212,7 @@ class TitleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {    print("titleCard:- sellPrice: $sellPrice");
-    return AspectRatio(aspectRatio: 2.5, 
+    return AspectRatio(aspectRatio: 2.4, 
       // child: Container( decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)),
       // padding: const EdgeInsets.all(15), 
       
@@ -225,7 +226,7 @@ class TitleCard extends StatelessWidget {
           RichText(text: TextSpan(children: [
              TextSpan(text: '\u20B9 $price', style: TextStyle(color: Colors.grey[850], fontSize: 20, fontWeight: FontWeight.w500 ),),
              const TextSpan(text: ' / Day', style: TextStyle(color: Colors.grey)),
-             if(sellPrice!=null)...[ TextSpan(text: " (Selling Price: $sellPrice)", style: TextStyle(color: Colors.grey,))],
+             if(sellPrice!=null)...[ TextSpan(text: " (Selling Price: $sellPrice)", style: const TextStyle(color: Colors.grey,))],
                ])),
           Row(children: [
             RatingBar(itemPadding: const EdgeInsets.all(1),ignoreGestures:true, allowHalfRating:true, initialRating:rating.toDouble(), itemSize:20, ratingWidget: RatingWidget(full: const Icon(Ionicons.star, color: Colors.amber,), half: const Icon(Ionicons.star_half, color: Colors.amber,), empty: const Icon(Ionicons.star_outline, color: Colors.amber,)), onRatingUpdate: (value){}),
@@ -235,7 +236,7 @@ class TitleCard extends StatelessWidget {
             child: InkWell( 
               onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return ReviewAndRatingPage(productID: productID,);}));},
               child: Text("($reviews reviews)", style: TextStyle(decoration: TextDecoration.underline, decorationColor: Colors.indigo[700], color: Colors.indigo[700] ),),),)
-
+    
           ],),
           Text(email,  style: const TextStyle(color: Colors.black38, overflow: TextOverflow.ellipsis), ), //maxFontSize: 12, minFontSize:10,
           //Text(location,  style: const TextStyle(color: Colors.black38, overflow: TextOverflow.ellipsis), ), //maxFontSize: 12, minFontSize:10,

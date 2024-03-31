@@ -60,8 +60,12 @@ itemCount = productData.keys.toList().length;
 
 for(dynamic id in productDetailIDList){
 print(productData[id]);
+String? price;
+if(productData[id]["price"].runtimeType == String){ price = productData[id]["price"];  }else{price = productData[id]["price"]["price"];}
 
-productDetailList.add(SpecialProductDetail(productID: id, image: productData[id]["image"], title: productData[id]["title"], price: productData[id]["price"], sellingPrice: productData[id]["sellingPrice"], description: productData[id]["description"], email: productData[id]["email"], location: productData[id]["location"], contact: productData[id]["contact"]));  
+print("productID: $id, image: ${productData[id]["image"]}, title: ${productData[id]["title"]}, price: $price, sellingPrice: ${productData[id]["sellingPrice"]}, description: ${productData[id]["description"]}, email: ${productData[id]["email"]}, location: ${productData[id]["location"]}, contact: ${productData[id]["contact"]}");
+productDetailList.add(SpecialProductDetail(productID: id, image: productData[id]["image"], title: productData[id]["title"], price: price!, sellingPrice: productData[id]["sellingPrice"], description: productData[id]["description"], email: productData[id]["email"], location: productData[id]["location"], contact: productData[id]["contact"].toString()));  
+
 String? imageURL = await ImageMapURL().imageURL(productData[id]["image"]);
 ImageMapURL.store[productData[id]["image"]] = imageURL!;
 

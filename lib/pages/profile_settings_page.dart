@@ -74,21 +74,18 @@ return  setState((){ switchValue = !value;  });
           Badge(largeSize: 40, alignment: Alignment.topRight, backgroundColor: Colors.transparent, label: IconButton(onPressed: () => addressTextField(), icon: const Icon(Ionicons.pencil, size: 20,),), child: AspectRatio(aspectRatio: 2, child: Card(surfaceTintColor: Colors.transparent, color: Colors.white, child: Padding(padding: const EdgeInsets.all(8), child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [ Text("${AppLocalizations.of(context)!.tagAddress}\n", style: const TextStyle(fontWeight: FontWeight.bold),), Text(address) ],)),   ))), //Card(child: Center(child: Text("Save your address")))
           Padding(padding: const EdgeInsets.all(8), child: Text(AppLocalizations.of(context)!.tagLoginProfile, style: const TextStyle(color: Colors.black54, fontSize: 16, ),)),
           AspectRatio(aspectRatio: 8, child: FilledButton(onPressed: (){FireBaseAuthentication().userSignOut().then((value)async{await Navigator.of(context).push(MaterialPageRoute(builder: (context){return const LoginPage();})).then((value){ someFunction();  });});   }, style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4)))), backgroundColor: MaterialStateProperty.all(Colors.black)), child: Text(AppLocalizations.of(context)!.tagLogOut, style: const TextStyle(fontSize: 16),)),),
-          Padding(padding: const EdgeInsets.all(8), child: Text(AppLocalizations.of(context)!.tagLanguage, style: const TextStyle(color: Colors.black54, fontSize: 16, ),)),
-          AspectRatio(aspectRatio: 4, child: Card( color: Colors.white, surfaceTintColor: Colors.transparent,
-            child: Row(children: [Padding(padding: const EdgeInsets.all(10), child: Text(AppLocalizations.of(context)!.tagMarathi)), const Spacer(), Padding(padding: const EdgeInsets.all(10), child: Switch(value: switchValue, onChanged: (newValue){ changeSwitchValue(switchValue);   }))],),),),
-          Padding(padding: const EdgeInsets.all(8), child: Text(AppLocalizations.of(context)!.tagadministrative, style: const TextStyle(color: Colors.black54, fontSize: 16, ),)),
-          AspectRatio(aspectRatio: 8, child: FilledButton(onPressed: ()async{
-            
-            
-            await isAdminUser().then((isAdmin){
-            if(isAdmin){  Navigator.of(context).push(MaterialPageRoute(builder: (context){return const AdminPage();   }));  }else{
-              showDialog(context: context, builder: (context){return AlertDialog(backgroundColor: Colors.white, surfaceTintColor: Colors.transparent, title: Text(AppLocalizations.of(context)!.tagNotLoggedInMSG),);   });}              
-            });
-
-             //
           
-          }, style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4)))), backgroundColor: MaterialStateProperty.all(Colors.black)), child: Text( AppLocalizations.of(context)!.tagAdminLogin  , style: const TextStyle(fontSize: 16),)),),
+          // Padding(padding: const EdgeInsets.all(8), child: Text(AppLocalizations.of(context)!.tagLanguage, style: const TextStyle(color: Colors.black54, fontSize: 16, ),)),
+
+          // AspectRatio(aspectRatio: 4, child: Card( color: Colors.white, surfaceTintColor: Colors.transparent,
+          //   child: Row(children: [Padding(padding: const EdgeInsets.all(10), child: Text(AppLocalizations.of(context)!.tagMarathi)), const Spacer(), Padding(padding: const EdgeInsets.all(10), child: Switch(value: switchValue, onChanged: (newValue){ changeSwitchValue(switchValue);   }))],),),),
+
+          // Padding(padding: const EdgeInsets.all(8), child: Text(AppLocalizations.of(context)!.tagadministrative, style: const TextStyle(color: Colors.black54, fontSize: 16, ),)),
+          // AspectRatio(aspectRatio: 8, child: FilledButton(onPressed: ()async{  
+          //   await isAdminUser().then((isAdmin){
+          //   if(isAdmin){  Navigator.of(context).push(MaterialPageRoute(builder: (context){return const AdminPage();   }));  }else{
+          //     showDialog(context: context, builder: (context){return AlertDialog(backgroundColor: Colors.white, surfaceTintColor: Colors.transparent, title: Text(AppLocalizations.of(context)!.tagNotLoggedInMSG),);   });}              });
+          // }, style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4)))), backgroundColor: MaterialStateProperty.all(Colors.black)), child: Text( AppLocalizations.of(context)!.tagAdminLogin  , style: const TextStyle(fontSize: 16),)),),
         ],),
       )
       );

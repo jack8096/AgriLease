@@ -33,6 +33,7 @@ static String? profilePhotoUrl;
   name = await FireBaseAuthentication.accountInfo?.displayName??"None";
   email = await FireBaseAuthentication.emailID;
   await SaveSetting().fetchProfieData().then((value){  if(value!=null){address= value["address"]??address; contact = value["contact"]??contact;}else{return 0;}   } );
+  print("setProfileInfo run $name $email $profilePhotoUrl ");
   return "setProfileInfo run $name $email $profilePhotoUrl ";
 
 }}
@@ -102,7 +103,9 @@ void googleSignInDialog()async{ if(FireBaseAuthentication.isSignedIn){return ;}
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar( surfaceTintColor: Colors.white70, elevation: 0, backgroundColor: const Color.fromARGB(0, 255, 255, 255),  actions: [Padding(padding: const EdgeInsets.fromLTRB(20, 0, 20, 0), child: InkWell(onTap: (){ Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ProfileSettings())).then((value)async{ await ProfileInfo.setProfileInfo(); setProfileInfo(); }   ) ; }, child: const Icon(Ionicons.settings_outline),),)],), // Color.fromARGB(255, 40, 42, 88),
-      body: Container(decoration: const BoxDecoration(color :Colors.white, image: DecorationImage(fit: BoxFit.cover, image: AssetImage("assets/ProfileBackgroudImage.jpg"))),  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),  child: ListView(
+      body: Container(decoration: const BoxDecoration(color :Colors.white, 
+      // image: DecorationImage(fit: BoxFit.cover, image: AssetImage("assets/ProfileBackgroudImage.jpg"))
+      ),  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),  child: ListView(
           children: [
             Container(margin: const EdgeInsets.fromLTRB(0, 64, 0, 0), child: ProfileCard(name: name, profilePhotoUrl: profilePhotoUrl,)),
             AddressCard(address: address),
@@ -170,14 +173,14 @@ class AddressCard extends StatelessWidget {
   }
 }
 
-class ProfileCard extends StatelessWidget {final String? profilePhotoUrl;
+class ProfileCard extends StatelessWidget {final String? profilePhotoUrl; final String name;
   const ProfileCard({
     super.key,
     required this.name,
     required this.profilePhotoUrl
   });
 
-  final String name;
+  
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,9 @@
 {
     "language":"Marathi",
 
-
+    "tagCategory":"प्रवर्ग",
+    "tagRecent":"नवीन",
+    "tagAll":"सर्व पहा",
 
     "tagProfile":"प्रोफाइल",
     "tagContact":"संपर्क",
@@ -44,5 +46,24 @@
     "tagHome":"मुख्य विभाग",
     "tagCall":"कॉल करा",
 
-    "tagSearch":"शोधा"
+    "tagSearch":"शोधा",
+
+    "tagBatterySprayer":"बॅटरी स्प्रेयर",
+    "tagBoomSprayer":"बूम स्प्रेअर",
+    "tagBrushcutter":"ब्रशकटर",
+    "tagCultivator":"शेतकरी",
+    "tagEngineSprayer":"इंजिन स्प्रेअर",
+    "tagHarrow":"कुळव",
+    "tagHTPsprayer":"एचटीपी स्प्रेयर",
+    "tagIntercultivator":"आंतरशेतकरी", 
+    "tagMBplough":"एमबी नांगर", 
+    "tagMiniRotator":"मिनी रोटेटर", 
+    "tagPowerTiller":"शक्ती पुरवठी", 
+    "tagReaper":"बारीक", 
+    "tagReversiblePlough":"प्रतिवर्ती नांगर", 
+    "tagRidger":"रिजर", 
+    "tagRotator":"रोटेटर", 
+    "tagSuperSeeder":"सुपर सीडर", 
+    "tagThresher":"थ्रेशर", 
+    "tagWaterPump":"पाण्याचा पंप"    
 }
