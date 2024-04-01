@@ -60,22 +60,22 @@ double thicknessDivider = 1;
             const AspectRatio(aspectRatio: 5, child: SizedBox(),),
             ListView(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), children:  [
               //dividerCommonCardProfile(),
-              CommonCardProfile(icon: "assets/profilePageIcons/farmer.png", title: "Profile", onTap: (){  Navigator.of(context).push( MaterialPageRoute(builder: (context){return const Profile();}) );  }),
+              CommonCardProfile(icon: "assets/profilePageIcons/farmer.png", title: AppLocalizations.of(context)!.tagProfile, onTap: (){  Navigator.of(context).push( MaterialPageRoute(builder: (context){return const Profile();}) );  }),
           
               //dividerCommonCardProfile(),
-              CommonCardProfile(icon: "assets/profilePageIcons/heart.png", title: "Favorites", onTap: (){        Navigator.of(context).push(MaterialPageRoute(builder: (context){return const FavoratesPage();} )  ); } ),
+              CommonCardProfile(icon: "assets/profilePageIcons/heart.png", title: AppLocalizations.of(context)!.tagFavorites, onTap: (){        Navigator.of(context).push(MaterialPageRoute(builder: (context){return const FavoratesPage();} )  ); } ),
           
               //dividerCommonCardProfile(),
-              CommonCardProfile(icon: "assets/profilePageIcons/admin.png", title: "Admin", onTap: ()async{
+              CommonCardProfile(icon: "assets/profilePageIcons/admin.png", title: AppLocalizations.of(context)!.tagAdmin, onTap: ()async{
                 await isAdminUser().then((isAdmin){
                 if(isAdmin){  Navigator.of(context).push(MaterialPageRoute(builder: (context){return const AdminPage();   }));  }else{
                 showDialog(context: context, builder: (context){return AlertDialog(backgroundColor: Colors.white, surfaceTintColor: Colors.transparent, title: Text(AppLocalizations.of(context)!.tagNotLoggedInMSG),);   });}              
                 });
               }),
               AspectRatio(aspectRatio: 4, child: Card( color: Colors.white, surfaceTintColor: Colors.transparent,
-                  child: Row(children: [  Padding(padding: const EdgeInsets.all(15), child: SizedBox(height: 50, width: 50, child: Image.asset("assets/profilePageIcons/languages.png"),)),  Padding(padding: const EdgeInsets.all(10), child: Text(AppLocalizations.of(context)!.tagMarathi, style: const TextStyle(fontSize: 20),)), const Spacer(), Padding(padding: const EdgeInsets.all(10), child: Switch(value: switchValue, onChanged: (newValue){ changeSwitchValue(switchValue);   }))],),),),
+                  child: Row(children: [  Padding(padding: const EdgeInsets.all(15), child: SizedBox(height: 50, width: 50, child: Image.asset("assets/profilePageIcons/languages.png"),)),  Text(AppLocalizations.of(context)!.tagMarathi, style: const TextStyle(fontSize: 20),), const Spacer(), Padding(padding: const EdgeInsets.all(10), child: Switch(value: switchValue, onChanged: (newValue){ changeSwitchValue(switchValue);   }))],),),),
               // dividerCommonCardProfile(),
-              CommonCardProfile(icon: "assets/profilePageIcons/logout.png", title: "Log Out", onTap: (){
+              CommonCardProfile(icon: "assets/profilePageIcons/logout.png", title: AppLocalizations.of(context)!.tagLogOut, onTap: (){
                 FireBaseAuthentication().userSignOut().then((value)async{await Navigator.of(context).push(MaterialPageRoute(builder: (context){return const LoginPage();}));});
               }),
           

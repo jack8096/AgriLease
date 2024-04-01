@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({
@@ -30,8 +31,19 @@ class LoginPage extends StatelessWidget {
             child: Column(
               children: [
                 FilledButton(  onPressed: ()async{await FireBaseAuthentication().signInWithGooggle().then( (value){if(FireBaseAuthentication.isSignedIn){Navigator.of(context).pop(); ProfileInfo.setProfileInfo();} ProfileInfo.setProfileInfo();  }  );  },  style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),   backgroundColor: MaterialStateProperty.all(Colors.transparent,) ),child: const Image(height: 40, image: AssetImage("assets/android_neutral_sq_SI@4x.png")) ), //const Text("Sign in with Google"),
-                SizedBox( width: 175,child: FilledButton.icon( icon: const Padding(padding: EdgeInsets.only(left: 8), child: Icon(Icons.phone_android,   color: Colors.black)), label: const Text( "Sign in with Phone number", style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500,   letterSpacing: -0.2, fontSize: 16),), style: ButtonStyle(backgroundColor:MaterialStateProperty.all(const Color.fromARGB(255, 242, 242, 242)),  textStyle: MaterialStateProperty.all( const TextStyle(color: Colors.black)), padding: MaterialStateProperty.all(const EdgeInsets.only(right: 10)), shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),   ), onPressed: ()async{ await Navigator.of(context).push(MaterialPageRoute(builder: (context){return const PhoneLogin();})   ).then((value){ if(FirebaseAuth.instance.currentUser != null){return Navigator.of(context).pop(); }}    );
-                 }),),
+                SizedBox( width: 175,child: FilledButton(
+                  style: ButtonStyle(backgroundColor:MaterialStateProperty.all(const Color.fromARGB(255, 242, 242, 242)),  textStyle: MaterialStateProperty.all( const TextStyle(color: Colors.black)), padding: MaterialStateProperty.all(const EdgeInsets.all(0)), shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5)))),   ),
+                  onPressed: ()async{ await Navigator.of(context).push(MaterialPageRoute(builder: (context){return const PhoneLogin();})   ).then((value){ if(FirebaseAuth.instance.currentUser != null){return Navigator.of(context).pop(); }}    );},
+                  
+                  child: Row(children: [
+                  Padding(padding: const EdgeInsets.only(left: 11, right: 9), child: Container(color: Colors.transparent, height: 22, width: 22, child: const Icon(Ionicons.phone_portrait_outline,   color: Colors.black, size: 22,))),
+                  const Text( "Sign in with Phone", //"Sign in with Phone number"
+                 style: TextStyle(color: Colors.black87, letterSpacing: 0, wordSpacing: 0,  fontFamily: "Roboto", fontWeight: FontWeight.w500,   fontSize: 16),
+                
+                ),
+                ],),
+
+                 ),),
           
               
               ]

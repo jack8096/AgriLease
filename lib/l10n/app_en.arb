@@ -1,6 +1,7 @@
 {
     "language":"English",
-
+    "tagFavorites":"Favorites",
+    
     "tagCategory":"Category",
     "tagRecent":"Recent",
     "tagAll":"All",
