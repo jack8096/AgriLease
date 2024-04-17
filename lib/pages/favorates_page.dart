@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FavoratesPage extends StatefulWidget {
   const FavoratesPage({super.key});
@@ -24,6 +25,7 @@ class _FavoratesPageState extends State<FavoratesPage> {
     favoratesList = await Favourites.getList()??[];
     await Future.delayed(const Duration(seconds: 2));
     productDetail = await FavorateProducts.productDetail(favoratesList); if(productDetail?.isEmpty??true){ setState((){isLoading = false;}); return null;   }
+    
     for(String productID in productDetail!.keys){  imagesName.add(productDetail?[productID]["image"]);  }
     
     
@@ -44,11 +46,11 @@ class _FavoratesPageState extends State<FavoratesPage> {
   Widget build(BuildContext context) {
     //print('productDetail?[favoratesList[0]?["image"]: ${productDetail?[favoratesList]}');
     return  Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.tagFavorites),),
       body: 
       isLoading?const Center(child:  CircularProgressIndicator(color: Colors.black, )):favoratesList.isEmpty?const Center(child: Text("No Favorate")):
       
-      ListView.builder(itemCount: favoratesList.length, itemBuilder: (context, itemNo)=> FavorateProductCard(image: imagesSrcs?[productDetail?[favoratesList[itemNo]]["image"]], productDetail: productDetail?[favoratesList[itemNo]], productDetailID: favoratesList[itemNo], ))
+      ListView.builder(itemCount: productDetail!.keys.length, itemBuilder: (context, itemNo)=> FavorateProductCard(image: imagesSrcs?[productDetail?[favoratesList[itemNo]]["image"]], productDetail: productDetail?[favoratesList[itemNo]], productDetailID: favoratesList[itemNo], ))
          //imagesSrcs?[imagesName[0]]
     );
   }
@@ -96,11 +98,14 @@ class FavorateProducts{
     if(productIDs == null){ return null;}
     final Map<String,Map?  > productDetals = {}; 
     Map productDetal = {};
-    for(String productID in productIDs){
+    for(String productID in productIDs){  print("for loop productIDs, productID: $productID");
     DataSnapshot snapshot = await rtdbRef.child(productID).get();
+    if(snapshot.value == null){print("productID: $productID = map<String, Null>"); continue; }
+    print("snapshot.value: ${snapshot.value}");
     productDetal =  snapshot.value as Map;
+    
     productDetals[productID] = productDetal;}  
-
+    print("productDetail: $productDetail");
     return productDetals;
 
   }

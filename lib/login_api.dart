@@ -35,5 +35,9 @@ signInWithGooggle()async{
 }
 
 Future<dynamic> userSignOut() async {
-  await googleSignIn.disconnect();  await fireBaseAuthInstance.signOut(); return 0;}
+  try{await googleSignIn.disconnect();  await fireBaseAuthInstance.signOut();}
+    catch(e){
+      await FirebaseAuth.instance.signOut();
+    }
+   return 0;}
 }

@@ -1,6 +1,6 @@
 import 'package:agrilease/main.dart';
-import 'package:agrilease/pages/admin_page.dart';
-import 'package:agrilease/pages/login_page.dart';
+// import 'package:agrilease/pages/admin_page.dart';
+// import 'package:agrilease/pages/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:agrilease/pages/my_adds.dart';
@@ -72,8 +72,8 @@ return  setState((){ switchValue = !value;  });
           Padding(padding: const EdgeInsets.all(8), child: Text(AppLocalizations.of(context)!.tagProfile, style: const TextStyle(color: Colors.black54, fontSize: 16, ),)),
           Badge(largeSize: 40, alignment: Alignment.topRight, backgroundColor: Colors.transparent, label: IconButton(onPressed: () => contactTextField(), icon: const Icon(Ionicons.pencil, size: 20,),), child: AspectRatio(aspectRatio: 3, child: Card(surfaceTintColor: Colors.transparent, color: Colors.white, child: Column( mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.center,  children: [  Text("${AppLocalizations.of(context)!.tagContact}\n", style: const TextStyle(fontWeight: FontWeight.bold),),Text(contact)  ])))), //IconButton(onPressed: () => contactTextField(), icon: const Icon(Ionicons.pencil)) Text("Contact"), 
           Badge(largeSize: 40, alignment: Alignment.topRight, backgroundColor: Colors.transparent, label: IconButton(onPressed: () => addressTextField(), icon: const Icon(Ionicons.pencil, size: 20,),), child: AspectRatio(aspectRatio: 2, child: Card(surfaceTintColor: Colors.transparent, color: Colors.white, child: Padding(padding: const EdgeInsets.all(8), child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [ Text("${AppLocalizations.of(context)!.tagAddress}\n", style: const TextStyle(fontWeight: FontWeight.bold),), Text(address) ],)),   ))), //Card(child: Center(child: Text("Save your address")))
-          Padding(padding: const EdgeInsets.all(8), child: Text(AppLocalizations.of(context)!.tagLoginProfile, style: const TextStyle(color: Colors.black54, fontSize: 16, ),)),
-          AspectRatio(aspectRatio: 8, child: FilledButton(onPressed: (){FireBaseAuthentication().userSignOut().then((value)async{await Navigator.of(context).push(MaterialPageRoute(builder: (context){return const LoginPage();})).then((value){ someFunction();  });});   }, style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4)))), backgroundColor: MaterialStateProperty.all(Colors.black)), child: Text(AppLocalizations.of(context)!.tagLogOut, style: const TextStyle(fontSize: 16),)),),
+          // Padding(padding: const EdgeInsets.all(8), child: Text(AppLocalizations.of(context)!.tagLoginProfile, style: const TextStyle(color: Colors.black54, fontSize: 16, ),)),
+          // AspectRatio(aspectRatio: 8, child: FilledButton(onPressed: (){FireBaseAuthentication().userSignOut().then((value)async{await Navigator.of(context).push(MaterialPageRoute(builder: (context){return const LoginPage();})).then((value){ someFunction();  });});   }, style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4)))), backgroundColor: MaterialStateProperty.all(Colors.black)), child: Text(AppLocalizations.of(context)!.tagLogOut, style: const TextStyle(fontSize: 16),)),),
           
           // Padding(padding: const EdgeInsets.all(8), child: Text(AppLocalizations.of(context)!.tagLanguage, style: const TextStyle(color: Colors.black54, fontSize: 16, ),)),
 

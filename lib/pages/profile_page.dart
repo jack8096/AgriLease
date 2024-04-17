@@ -5,6 +5,7 @@ import 'package:agrilease/pages/admin_page.dart';
 import 'package:agrilease/pages/login_page.dart';
 import 'package:agrilease/pages/profile.dart';
 import 'package:agrilease/pages/profile_settings_page.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -77,7 +78,10 @@ double thicknessDivider = 1;
               // dividerCommonCardProfile(),
               CommonCardProfile(icon: "assets/profilePageIcons/logout.png", title: AppLocalizations.of(context)!.tagLogOut, onTap: (){
                 FireBaseAuthentication().userSignOut().then((value)async{await Navigator.of(context).push(MaterialPageRoute(builder: (context){return const LoginPage();}));});
-              }),
+                // FireBaseAuthentication().
+              
+              }
+              ),
           
               // dividerCommonCardProfile(),
               ],)

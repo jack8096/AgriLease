@@ -86,10 +86,13 @@ class _PhoneLoginState extends State<PhoneLogin> {
               TextFormField(keyboardType: TextInputType.number, controller: phoneNumberController,inputFormatters: [FilteringTextInputFormatter.digitsOnly,], maxLength: 10, decoration: const InputDecoration( hintText: "Enter Phone Number"),  ),
               //:TextFormField(keyboardType: TextInputType.number, controller: smsOTP, inputFormatters: [FilteringTextInputFormatter.digitsOnly,], maxLength: 6, decoration: const InputDecoration(hintText: "Enter OTP"),),
               //!otpSend?
-              FilledButton(onPressed: (){  
+              FilledButton(onPressed: (){
+                
+                showDialog(barrierColor: Colors.black12, context: context, builder: (context)=>  const Dialog(shadowColor: Colors.transparent, backgroundColor: Colors.transparent, surfaceTintColor: Colors.transparent,   child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator( color: Colors.black,)))));
+                
         
               auth.verifyPhoneNumber( phoneNumber: "+91${phoneNumberController.text}",
-              verificationCompleted: (PhoneAuthCredential credential){ print("phone loged in"); Navigator.of(context).pop();        },
+              verificationCompleted: (PhoneAuthCredential credential){ print("phone loged in"); Navigator.of(context).popUntil( ModalRoute.withName("/") );        },
               verificationFailed: (FirebaseAuthException e){}, 
               codeSent: (String verificationId, int? resendToken)async{ 
                 print("smsOTP.text: ${smsOTP.text}");
@@ -167,9 +170,9 @@ static final TextEditingController smsOTP = TextEditingController();
             child: Column(children: [
               TextFormField(keyboardType: TextInputType.number, controller: smsOTP, inputFormatters: [FilteringTextInputFormatter.digitsOnly,], maxLength: 6, decoration: const InputDecoration(hintText: "Enter OTP"),),
               FilledButton(onPressed: (){
-              
+              showDialog(barrierColor: Colors.black12, context: context, builder: (context)=>  const Dialog(shadowColor: Colors.transparent, backgroundColor: Colors.transparent, surfaceTintColor: Colors.transparent,   child: Center(child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator( color: Colors.black,)))));
                 PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsOTP.text);
-                FirebaseAuth.instance.signInWithCredential(credential).then((value){  Navigator.of(context).pop(); Navigator.of(context).pop(); });
+                FirebaseAuth.instance.signInWithCredential(credential).then((value){  Navigator.of(context).pop(); Navigator.of(context).pop(); Navigator.of(context).pop(); Navigator.of(context).pop(); });
               
               }, child: const Icon(Ionicons.arrow_forward))
               
