@@ -57,24 +57,19 @@ final  backgroundcolor = const Color.fromARGB(255, 255, 249, 255,);
 
                         }, child: Text(AppLocalizations.of(context)!.tagChat, style: TextStyle(color: Colors.green[400]),) ),
                       ElevatedButton( style: ButtonStyle( backgroundColor: MaterialStateProperty.all<Color>(const Color.fromRGBO(102, 187, 106, 1)), foregroundColor: MaterialStateProperty.all<Color>(Colors.white),  shape: MaterialStateProperty.all<RoundedRectangleBorder>( RoundedRectangleBorder( borderRadius: BorderRadius.circular(6.0),))),
-                        onPressed: (){ launchUrl(Uri(scheme: 'tel', path: contact)); }, child: Text(AppLocalizations.of(context)!.tagCall)),
-           ]            
+                        onPressed: (){ launchUrl(Uri(scheme: 'tel', path: contact)); }, child: Text(AppLocalizations.of(context)!.tagCall)),]
+                       
         ),
       ) ,),
     )),
-    floatingActionButton: FloatingActionButton(onPressed: ()async{
+    floatingActionButton: (FireBaseAuthentication.emailID.replaceAll(" ", "") != email.replaceAll(" ", ""))?FloatingActionButton(onPressed: ()async{ print("FireBaseAuthentication.emailID: '${FireBaseAuthentication.emailID.replaceAll(" ", "")}', email: '${email.replaceAll(" ", "")}'");
         if(productID == null){return ;}
         await Chats().createChatRoom(FireBaseAuthentication.emailID, email).then((value){  
         Navigator.of(context).push(MaterialPageRoute(builder: (context){
-          
           return CalenderPage(calendarController: ChatSection.calendarController, productID: productID??"", name: title, image: image, price: price, chatRoomID: value, reciverEmail: email);
-          //ChatSection(roomID: value, reciverEmail: email);
           }  ));
-        
         });
-
-
-    }, backgroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)), child: const Icon(Icons.schedule_outlined)),
+    }, backgroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)), child: const Icon(Icons.schedule_outlined)):null,
     );
   }
 
@@ -234,8 +229,9 @@ class TitleCard extends StatelessWidget {
             
             Padding(padding: const EdgeInsets.fromLTRB(10, 0, 4, 0),
             child: InkWell( 
-              onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return ReviewAndRatingPage(productID: productID,);}));},
-              child: Text("($reviews reviews)", style: TextStyle(decoration: TextDecoration.underline, decorationColor: Colors.indigo[700], color: Colors.indigo[700] ),),),)
+              onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return ReviewAndRatingPage(productID: productID, email: email,);}));},
+              child: Text("($reviews reviews)", style: TextStyle(decoration: TextDecoration.underline,
+               decorationColor: Colors.indigo[700], color: Colors.indigo[700] ),),),)
     
           ],),
           Text(email,  style: const TextStyle(color: Colors.black38, overflow: TextOverflow.ellipsis), ), //maxFontSize: 12, minFontSize:10,

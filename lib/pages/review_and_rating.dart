@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:ionicons/ionicons.dart';
 
-class ReviewAndRatingPage extends StatefulWidget {final String? productID;
-  const ReviewAndRatingPage({super.key, required this.productID});
+class ReviewAndRatingPage extends StatefulWidget {final String? productID; final String email;
+  const ReviewAndRatingPage({super.key, required this.productID, required this.email});
 
   @override
   State<ReviewAndRatingPage> createState() => _ReviewAndRatingPageState();
@@ -51,7 +51,8 @@ Future<void> initFunction ()async {
       //     final Map<String, String>? data = await RatingsAndReviews(productID: widget.productID!).getReviews;
       // }}, child: const Text("test0")),)
       // ],),
-      floatingActionButton: FloatingActionButton(onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return ReviewAndRatingFormPage(productID: widget.productID,);}));}, backgroundColor: Colors.white, child: const Icon(Ionicons.pencil),),
+      floatingActionButton: (FireBaseAuthentication.emailID.replaceAll(" ", "") != widget.email.replaceAll(" ", ""))?   FloatingActionButton(onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return ReviewAndRatingFormPage(productID: widget.productID,);}));}, backgroundColor: Colors.white, child: const Icon(Ionicons.pencil),)
+      :null
     );
   }
 }

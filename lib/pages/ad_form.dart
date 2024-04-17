@@ -170,7 +170,7 @@ child: Padding(padding: const EdgeInsets.all(20),
   
         labelText(AppLocalizations.of(context)!.tagTitle),       TextFormField( decoration: inputDecoration(titleValidate? Colors.green:Colors.white),  controller: title,       validator: (value) { if(value!=''   ){ setState(() {titleValidate=true;});              return null; }else{ setState(() {titleValidate=false;}); return AppLocalizations.of(context)!.tagTitleErrorMSG; }  }, ), //value.runtimeType==String);
   
-        labelText("${AppLocalizations.of(context)!.tagPrice} \u{20B9}"),       TextFormField( onTap: ()async{print("onTap on price"); await showDialog(barrierDismissible: false, context: context, builder: (context){return PriceRadioTile(selectedRadioTile: priceUnit);} ).then((value) => setState((){priceUnit;}));  },  inputFormatters: [FilteringTextInputFormatter.digitsOnly], decoration: InputDecoration(suffixText: "per ${priceUnit[0]}", suffixIcon: const Icon(Ionicons.checkmark_circle_outline), suffixIconColor: priceValidate? Colors.green:Colors.white, contentPadding: const EdgeInsets.all(8), border: const OutlineInputBorder(), focusedBorder: const OutlineInputBorder(borderSide: BorderSide(width: 2, color: Colors.black))  ),  controller: price,       validator: (value) { try {int.parse(value??"None"); setState((){priceValidate = true;});return null; } catch (e) { setState((){priceValidate = false;}); } return AppLocalizations.of(context)!.tagPriceErrorMSG; }, ),
+        labelText("${AppLocalizations.of(context)!.tagPrice} \u{20B9}"),       TextFormField( onTap: ()async{print("onTap on price"); await showDialog(barrierDismissible: true, context: context, builder: (context){return PriceRadioTile(selectedRadioTile: priceUnit);} ).then((value) => setState((){priceUnit;}));  },  inputFormatters: [FilteringTextInputFormatter.digitsOnly], decoration: InputDecoration(suffixText: "per ${priceUnit[0]}", suffixIcon: const Icon(Ionicons.checkmark_circle_outline), suffixIconColor: priceValidate? Colors.green:Colors.white, contentPadding: const EdgeInsets.all(8), border: const OutlineInputBorder(), focusedBorder: const OutlineInputBorder(borderSide: BorderSide(width: 2, color: Colors.black))  ),  controller: price,       validator: (value) { try {int.parse(value??"None"); setState((){priceValidate = true;});return null; } catch (e) { setState((){priceValidate = false;}); } return AppLocalizations.of(context)!.tagPriceErrorMSG; }, ),
 
         labelText("Selling Price"), TextFormField( inputFormatters: [FilteringTextInputFormatter.digitsOnly], controller: sellPrice, decoration: const InputDecoration( suffixIcon: Icon(Ionicons.checkmark_circle_outline), suffixIconColor: Colors.green, contentPadding: EdgeInsets.all(8), border: OutlineInputBorder(),  hintText: "(Optional)", focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 2, color: Colors.black))  )  ),
   
@@ -275,12 +275,12 @@ class _PriceRadioTileState extends State<PriceRadioTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog( surfaceTintColor: Colors.white, child: AspectRatio(aspectRatio: 1.5, child: Card(
+    return Dialog( surfaceTintColor: Colors.white, child: AspectRatio(aspectRatio: 1, child: Card(
   child: Center(child: Column( children: [
-    const Padding(padding: EdgeInsets.all(8), child: Text("Rent per"),),
-    RadioListTile(title: const Text("Hours"), value: "Hour" , groupValue: widget.selectedRadioTile[0], onChanged: (value){ widget.selectedRadioTile[0]=value ?? "null"; print("selectedRadioTile: ${widget.selectedRadioTile[0]}, value: $value"); setStateFunction(value); } ),
-    RadioListTile(title: const Text("Days"),  value: "Day"  , groupValue: widget.selectedRadioTile[0], onChanged: (value){ widget.selectedRadioTile[0]=value ?? "null"; print("selectedRadioTile: ${widget.selectedRadioTile[0]}, value: $value"); setStateFunction(value); } ),
-    RadioListTile(title: const Text("Weeks"), value: "Week" , groupValue: widget.selectedRadioTile[0], onChanged: (value){ widget.selectedRadioTile[0]=value ?? "null"; print("selectedRadioTile: ${widget.selectedRadioTile[0]}, value: $value"); setStateFunction(value); } ),
+    const AspectRatio(aspectRatio: 6, child:Center(child: Padding(padding: EdgeInsets.all(8), child: Text("Rent per"),)),),
+    AspectRatio(aspectRatio: 6, child:RadioListTile(title: const Text("Hours"), value: "Hour" , groupValue: widget.selectedRadioTile[0], onChanged: (value){ widget.selectedRadioTile[0]=value ?? "null"; print("selectedRadioTile: ${widget.selectedRadioTile[0]}, value: $value"); setStateFunction(value); } ),),
+    AspectRatio(aspectRatio: 6, child:RadioListTile(title: const Text("Days"),  value: "Day"  , groupValue: widget.selectedRadioTile[0], onChanged: (value){ widget.selectedRadioTile[0]=value ?? "null"; print("selectedRadioTile: ${widget.selectedRadioTile[0]}, value: $value"); setStateFunction(value); } ),),
+    AspectRatio(aspectRatio: 6, child:RadioListTile(title: const Text("Weeks"), value: "Week" , groupValue: widget.selectedRadioTile[0], onChanged: (value){ widget.selectedRadioTile[0]=value ?? "null"; print("selectedRadioTile: ${widget.selectedRadioTile[0]}, value: $value"); setStateFunction(value); } ),),
   ],)
   
   ),

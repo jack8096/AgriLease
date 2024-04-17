@@ -1,7 +1,6 @@
 //import 'dart:ffi';
 
 import 'package:agrilease/login_api.dart';
-import 'package:agrilease/main.dart';
 import 'package:agrilease/pages/ad_form.dart';
 import 'package:agrilease/pages/product_card_full_detail_page.dart';
 import 'package:agrilease/pages/recent_section.dart';
@@ -175,7 +174,8 @@ Future<void> initFunction()async{
 someFunction1(name){  final  url = recentAds.imageURLMap[name]??"https://firebasestorage.googleapis.com/v0/b/agrilease-ecd0b.appspot.com/o/None.jpeg?alt=media&token=ca13e835-b713-4991-8233-3d1098eec860";
   print("Name: $name , URL: $url"); return url; }
 
-Future<void> someFunction3(value, index )async{ print("$value $index");
+Future<void> someFunction3(index )async{ print("$index");
+// Future<void> someFunction3(value, index )async{ print("$value $index");
 
   print("someFunction3 start");
   final id = MyAds.productDetailIDList[index]; 
@@ -220,13 +220,13 @@ Future<void> someFunction3(value, index )async{ print("$value $index");
 
   ListView AdsListView() {
 
-Future<dynamic> alertDeleteDialog(BuildContext context, value, index) => showDialog(context: context, builder: (context){return AlertDialog(
+Future<dynamic> alertDeleteDialog(BuildContext context, index) => showDialog(context: context, builder: (context){return AlertDialog(
   backgroundColor: Colors.white, surfaceTintColor: Colors.transparent,
   title: const Text("Are you sure you want to delete?"),
   actions: [
     FilledButton( onPressed: (){ Navigator.of(context).pop(); },    style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))), backgroundColor: MaterialStateProperty.all(Colors.white)), child: const Text("Cancel", style: TextStyle(color: Colors.grey),)),
     FilledButton( onPressed: ()async{Navigator.of(context).pop(); 
-    await someFunction3(value, index).then((value){ initFunction(); }) ;
+    await someFunction3(index).then((value){ initFunction(); }) ;
       },
         style: ButtonStyle(shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))), backgroundColor: MaterialStateProperty.all(Colors.red[800])), child: const Text("Delete")),
     
@@ -251,7 +251,13 @@ Future<dynamic> alertDeleteDialog(BuildContext context, value, index) => showDia
             ],
           ),
         ),
-        Row( children: [PopupMenuButton(icon: const Icon(Ionicons.ellipsis_vertical, color: Colors.black,), color: Colors.red[50], surfaceTintColor: Colors.white, onSelected: (value){ alertDeleteDialog(context, value, index);  },  itemBuilder: (context){return[ PopupMenuItem( value: 0, child: Text(AppLocalizations.of(context)!.tagDelete, textAlign:TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),))];})],),
+        
+        Row( children: [
+          IconButton(onPressed: (){
+            alertDeleteDialog(context, index);
+          }, icon: const Icon(Icons.remove_circle_outline, color: Color.fromARGB(255,96,148,6),),),
+          // PopupMenuButton(icon: const Icon(Ionicons.ellipsis_vertical, color: Colors.black,), color: Colors.red[50], surfaceTintColor: Colors.white, onSelected: (value){ alertDeleteDialog(context, value, index);  },  itemBuilder: (context){return[ PopupMenuItem( value: 0, child: Text(AppLocalizations.of(context)!.tagDelete, textAlign:TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold),))];})
+          ],),
      ],
      )),
     );}  ));
